@@ -53,6 +53,11 @@ vector<string> allHousePreamble = getAllHousePreamble();
 vector<string> allStreetPreamble = getAllStreetPreamble();
 
 
+void pressKey(){
+  cout << "Press any key to continue" << endl;
+  _getwch();
+}
+
 int random_number(){ // random number generator, used for generating a new random seed
   random_device generator;
   uniform_int_distribution<int> distribution(0,100000);
@@ -671,6 +676,10 @@ public:
   weapon& getCurrentWeapon(){
     return playerWeapons[currentWeaponIndex];
   }
+
+  quantItems getQuantItems(){
+    return playerQuantityItems;
+  }
 };
 
 class player {
@@ -876,6 +885,16 @@ public:
     }
   }
 
+  void consumeHealItem(){
+      if (this->getInventory().getQuantItems().getHealingItemVector().size() == 0 )
+      {
+        cout << "There are no items that you can use to heal you!" << endl;
+        pressKey();
+      } else{
+        this->increaseHealth(this->invObj.healPlayer());
+      }
+  }
+
   // SETTERS
   void setRetired(bool passedBool){
     hasRetired = passedBool;
@@ -905,16 +924,22 @@ public:
   }
 
   void decreaseHealth(int passedInt, string passedNPC){
+    cout << "Your Health: " << this->getHealth() << " has been decreased by: " << passedInt << "!"  <<  endl;
     health -= passedInt;
+    cout << "Your health is: " << this->getHealth() << endl;
     if (health < 0){
       hasDied == true;
       killedBy = passedNPC;
     }
+
   }
 
   void increaseHealth(int passedInt){
+    cout << "Your Health: " << this->getHealth() << " has been incerased by: " << passedInt << "!"  <<  endl;
     health += passedInt;
+    cout << "Your health now is: " << this->getHealth() << endl;
   }
+
   // Getters
   inventory& getInventory(){
     return invObj;
@@ -1259,8 +1284,6 @@ public:
     dreadCheck = currentEvent.dread;
     repCheck = currentEvent.rep;
   }
-
-
   
   int diceRoll(string name, int mod){ // Dice roll function that rolls a D20
     int roll = ((randNumber(0, 20)) + 1); // Grabs a number between 0 and 19
@@ -1313,11 +1336,11 @@ public:
     randNumber();
     cout<<"-=== " + passedPlayer.getName() + " VS " + eventNpc.getName() + " ===-" << endl;
     cout<<"Player health: " << playerHealth << endl;
-    cout<<" Enemy health: " << npcHealth <<endl;
+    cout<<"Enemy health: " << npcHealth <<endl;
     cout<<""<<endl;
 
     do { 
-      _getwch();
+      pressKey();
       int playerDamage = damageCalc(diceRoll("Player", (passedPlayer.getStrength() - 10)), passedPlayer.getInventory().getCurrentWeapon().getDamage()); // Generates the damage the player will do
       if (playerDamage <= -1){
         cout<<passedPlayer.getName() + " hurt themselves trying to attack!"<<endl;
@@ -1333,7 +1356,7 @@ public:
       cout<<"Player health: " << playerHealth << endl;
       cout<<" Enemy health: " << npcHealth <<endl;
       cout<<""<<endl;
-      _getwch();
+      pressKey();
       if(npcHealth > 0){
         int npcDamage = damageCalc(diceRoll("NPC"), eventNpc.personWeapon.getDamage());
         if (npcDamage <= -1){
@@ -1489,15 +1512,11 @@ public:
       break;
     }
     case 1: // Gives Player Item
-      cout<< "This will give the player an item at some point" << endl;
       passedPlayer.getInventory().rndQuantityItem();
       break;
     case 2:{
-      cout<< "This will do somthing, maybe heal the player" << endl;
-      int tempInt = randNumber(5, 10);
-      cout << "Your good fortune applies to your health as well, you heal: " << tempInt << endl;
-      passedPlayer.increaseHealth(tempInt);
-      cout << "You now have " << passedPlayer.getHealth() << " health left." << endl;
+      cout << "Your good fortune applies to your health as well" << endl;
+      passedPlayer.increaseHealth(randNumber(5, 10));
       break;      
     }
     case 3:
@@ -1519,10 +1538,7 @@ public:
       break;
     }
     case 1: // Gives Player Item
-      int tempHealthDecrease = randNumber(10, -100);
-      cout<< "You Lose: -" << tempHealthDecrease << " Health." << endl;
-      cout<< "You Have: " << passedPlayer.getHealth() << endl; 
-      passedPlayer.decreaseHealth(tempHealthDecrease, this->npcName);
+      passedPlayer.decreaseHealth(randNumber(5, 10), this->npcName);
       break;
     }
   }
@@ -1644,8 +1660,7 @@ public:
       return true;
     } else{
       cout << "Invalid position, please reinput" << endl;
-      cout<< "Press any button to continue" << endl;
-      _getwch();
+      pressKey();
       return false;
     }
   }
@@ -1731,63 +1746,67 @@ int main(){
     map gameMap = map(allEvents.size());   
     bool isEmpty = false;
     while (isEmpty != true){
-      system("CLS");   
-
-      cout<< "Please Select an action" <<endl;
-      cout<< "(1) Continue to next event" << endl;
-      cout<< "(2) Visit shop" << endl;
-      cout<< "(3) Retire" << endl;
-      cout<< "(4) View inventory" << endl;
-      cout<< "(5) Select Weapon" << endl;
-      cout<< "(10) EXIT" << endl;
-      int eventLoopInput;
-      cin >> eventLoopInput;
-      switch (eventLoopInput){
-      case 1:
-        break;
-      case 2:
-        // Shop code
-        break;
-      case 3: 
-        cout<< "You feel like the road ahead is too far.."<< endl;
-        cout<< "It's consquences too great.."<< endl;
-        cout<< "Throwing your weapon down, you give in, and go home." << endl;
-        cout<<"Press any key to continue..."<<endl;
-        _getwch();
-        system("CLS");
-        playerFamily.getCurrentPlayer().setRetired(true);
-        break;
-      case 4:
-        playerFamily.getCurrentPlayer().getInventory().displayQuantityItems();
-        playerFamily.getCurrentPlayer().getInventory().displayAllWeapons();
-        cout<<"Press any key to continue..."<<endl;
-        _getwch();
-        break;
-      case 5:
-        playerFamily.getCurrentPlayer().getInventory().changeCurrentWeapon();
-        cout<<"Press any key to continue..."<<endl;
-        _getwch();
-        break;
-      case 10:
-        playerFamily.familyStories();
-        cout<<"Press any key to continue..."<<endl;
-        _getwch();
-        return 1;
-        break;
+      bool breakFree = false;
+      while (breakFree != true){
+        system("CLS");      
+        cout<< "Please Select an action" <<endl;
+        cout<< "(1) Continue to next event" << endl;
+        cout<< "(2) Visit shop" << endl;
+        cout<< "(3) Retire" << endl;
+        cout<< "(4) View inventory" << endl;
+        cout<< "(5) Select Weapon" << endl;
+        cout<< "(6) Heal Player" << endl;
+        cout<< "(10) EXIT" << endl;
+        int eventLoopInput;
+        cin >> eventLoopInput;
+        switch (eventLoopInput){
+        case 1:
+          breakFree = true;
+          break;
+        case 2:
+          // Shop code
+          break;
+        case 3: 
+          cout<< "You feel like the road ahead is too far.."<< endl;
+          cout<< "It's consquences too great.."<< endl;
+          cout<< "Throwing your weapon down, you give in, and go home." << endl;
+          pressKey();
+          system("CLS");
+          playerFamily.getCurrentPlayer().setRetired(true);
+          breakFree = true;
+          break;
+        case 4:
+          playerFamily.getCurrentPlayer().getInventory().displayQuantityItems();
+          playerFamily.getCurrentPlayer().getInventory().displayAllWeapons();
+          pressKey();
+          break;
+        case 5:
+          playerFamily.getCurrentPlayer().getInventory().changeCurrentWeapon();
+          pressKey();
+          break;
+        case 6:
+          playerFamily.getCurrentPlayer().consumeHealItem();
+          break;
+        case 10:
+          playerFamily.familyStories();
+          pressKey();
+          return 1;
+          break;
+        }       
       }
-
+      
       if (playerFamily.getCurrentPlayer().getRetired() == true){
         cout<< "The family grows and a new adventruer take up the helm" << endl;
         playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace());
         map gameMap = map(allEvents.size());   
       }  
-
-      system("CLS"); 
+  
       if(gameMap.checkIfEndLevel()){
         cout<<"You have reached the end of your path" << endl;
         break;
       }
 
+      system("CLS"); 
       gameMap.getBinTree().printBT();
       cout << "Do you wish to move left or right? " << endl;
       string playerChoiceLeftOrRight;
@@ -1796,27 +1815,15 @@ int main(){
       if (playerChoiceLeftOrRight == "left" ||	playerChoiceLeftOrRight == "Left"){
         if(gameMap.changeLocation(true)){ // if you want to go left put true
           gameMap.getCurrentLocation()->getNodeEvent()->startEvent(playerFamily.getCurrentPlayer(), gameMap.getCurrentLocation()->getNodeEvent()->eventNpc );
-          cout<<"Press any key to continue..."<<endl;
-          _getwch();
+          pressKey();
           isEmpty = gameMap.checkIfEndLevel();
         }; 
       } else{
         if(gameMap.changeLocation(false)){ // if you want to go right put false
           gameMap.getCurrentLocation()->getNodeEvent()->startEvent(playerFamily.getCurrentPlayer(), gameMap.getCurrentLocation()->getNodeEvent()->eventNpc);
-          cout<<"Press any key to continue..."<<endl;
-          _getwch();
+          pressKey();
           isEmpty = gameMap.checkIfEndLevel();
         } 
-      }
-
-      if (playerFamily.getCurrentPlayer().getPlayerStatus()){
-        cout<< "The world fade around you..."<< endl;
-        cout<< "...You feel your last breath"<< endl;
-        cout<< "But new life begins to stir..." <<endl;
-        cout<< "your child starts anew"<<endl;
-        cout<<"Press any key to continue..."<<endl;
-        _getwch();
-        playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace());
       }
 
       if (isEmpty == true){
@@ -1824,9 +1831,17 @@ int main(){
         cout << "You reach the end of known world" << endl;
         cout << "Turning back you face the path of your travels" << endl; 
         cout << "It is time to go home."<< endl;
-        cout<<"Press any key to continue..."<<endl;
-        _getwch();
+        pressKey();
         system("CLS");
+        playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace());
+      }
+
+      if (playerFamily.getCurrentPlayer().getPlayerStatus()){
+        cout<< "The world fade around you..."<< endl;
+        cout<< "...You feel your last breath"<< endl;
+        cout<< "But new life begins to stir..." <<endl;
+        cout<< "your child starts anew"<<endl;
+        pressKey();
         playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace());
       }
     }
