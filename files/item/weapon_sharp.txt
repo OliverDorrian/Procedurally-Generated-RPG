@@ -1,0 +1,13 @@
+sword
+dagger
+spear
+spike
+shiv
+rapier
+schweizersäbel
+scimitar
+katana
+zweihänder
+kopis
+danish_axe
+war_scythe

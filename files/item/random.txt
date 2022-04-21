@@ -1,0 +1,13 @@
+vase
+candlestick
+club
+painting
+chair
+book
+trumpet
+rake
+spoon
+big spoon
+bat
+hammer
+rock
