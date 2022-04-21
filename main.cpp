@@ -484,6 +484,11 @@ public:
   healItem(string passedName){
     itemName = passedName;
   }
+
+  int useItem(){
+    this->decQuantity();
+    return healingValue;
+  }
 };
 
 class richItem: public genericItem{
@@ -591,6 +596,10 @@ public:
     cout << "===========================" << endl;
   }
 
+  int getRndHeal(){
+    return allHeals[randNumber(0, allHeals.size())].useItem();
+  }
+
   // Getters 
   vector<healItem> getHealingItemVector(){
     return allHeals;
@@ -652,6 +661,10 @@ public:
     cin >> tempInput;
     currentWeaponIndex = tempInput;
 
+  }
+
+  int healPlayer(){
+    return this->playerQuantityItems.getRndHeal();
   }
 
   // GETTERS
