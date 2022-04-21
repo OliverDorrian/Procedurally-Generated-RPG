@@ -43,7 +43,7 @@ public:
   }
 
   string getLineCap(int lineNumber) {
-      string tempString = vec[lineNumber%numOfLines];
+    string tempString = vec[lineNumber%numOfLines];
     tempString[0] = toupper(tempString[0]);
     return  tempString;
   }

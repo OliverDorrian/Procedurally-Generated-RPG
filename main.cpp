@@ -45,6 +45,11 @@ file bluntFile = file("files/item/blunt.txt");
 file bluntWords = file("files/item/words/bluntWords.txt");
 file healingWords = file("files/items/healing.txt");
 file richWords = file("files/items/rich.txt");
+// Motto Files
+file orcMotto = file("files/mottos/orc.txt");
+file dogMotto = file("files/mottos/dog.txt");
+file genericMotto = file("files/mottos/generic.txt");
+
 vector<events> allEvents = getAllEvents();
 vector<string> allMeadowsIntro = getAllMeadowsIntro();
 vector<string> allUnderIntro = getAllUnderWorldIntro();
@@ -260,6 +265,7 @@ protected:
   string name; // name of the person
   string race; // which race they belong to
   string desc;
+  string motto;
   int height; // how tall they are
   int age; // age of the person
   int health = 15; // health stat
@@ -288,6 +294,11 @@ public:
     cout<< "" << endl;
   }
 
+  virtual void getMotto(){
+    motto = genericMotto.getLineCap(randNumber());
+  }
+
+  // GETTERS
   string getName(){
     return name;
   }
@@ -303,6 +314,10 @@ public:
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Bandit";      
     desc = "Beefy, brutal, and brainless. \n Orcs like to crush first and ask questions never.";    
+  }
+
+  void getMotto(){
+    motto = orcMotto.getLineCap(randNumber()); 
   }
 };
 
@@ -411,6 +426,10 @@ public:
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Mercenaries Guild"; 
     desc = "Rough, raring, and righteous. \n They can sniff out anyone...if the price is right.";   
+  }
+
+  void genMotto(){
+    motto = dogMotto.getLineCap(randNumber());
   }
 };
 
