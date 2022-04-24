@@ -1131,7 +1131,12 @@ public:
  event(int passedCode){
     // gets the event structure 
     eventID = passedCode;
-    currentEvent = allEvents[eventID];
+    try{
+      currentEvent = allEvents[eventID];
+    } catch (out_of_range& e){
+      cout << e.what() << endl;
+    }
+
     eventName = currentEvent.name;
     biome = currentEvent.biomeType;
     location = currentEvent.location;
@@ -1352,7 +1357,6 @@ public:
   int fightLoop(player& passedPlayer, person& eventNpc){
     int playerHealth = 15;
     int npcHealth = 15;
-    randNumber();
     cout<<"-=== " + passedPlayer.getName() + " VS " + eventNpc.getName() + " ===-" << endl;
     cout<<"Player health: " << playerHealth << endl;
     cout<<"Enemy health: " << npcHealth <<endl;
@@ -1645,10 +1649,14 @@ public:
     } 
 
     rootNode = new node((randNumber(0, passedSize)) + 1, randNumber(0, allEvents.size())); // change this to rnd number
-
-    for (size_t i = 0; i < passedSize -1; i++){
-      this->generate_node(randNumber(0, allEvents.size()) + 1, rootNode, tempArrayOfIndex[i]); // change this to rnd number
-    }     
+    
+    try{
+      for (size_t i = 0; i < passedSize -1; i++){
+        this->generate_node(randNumber(0, allEvents.size()) + 1, rootNode, tempArrayOfIndex[i]); // change this to rnd number
+      }
+    } catch (out_of_range& e){
+      cout << e.what() << endl;
+    }
     curretNode = rootNode; 
   }
 
