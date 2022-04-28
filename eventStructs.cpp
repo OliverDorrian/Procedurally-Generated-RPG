@@ -32,7 +32,7 @@ vector<events> getAllEvents(){
   event1.name = "Wild Jazz Band";
   event1.biomeType = "Underworld";
   event1.location = "bar";
-  event1.faction = rand() % 2 == 0 ? "Default" : "Merchant";
+  event1.faction = "Default";
   event1.rep = 2;
 
   event1.problem[0] = "You sit in anticpitation as the tables fill up. You have no idea what is about to happen, but you are excited to find out. <npcName>'s band enters the stage, proclaiming to be the heirs to 'Freestyle Expressionist' Jazz. You wish to hit them.";
@@ -92,7 +92,7 @@ vector<events> getAllEvents(){
   event3.name = "A Stray Dog";
   event3.biomeType = "Underworld";
   event3.location = "street";
-  event3.faction = "Mercenary";
+  event3.faction = "Default";
   event3.rep = 2;
 
   event3.problem[0] = "A weeping whimper sounds from a small dog as he timidly approaches you. Clearly injured, his face gives you the saddness of glances. The small dog yelps as he demands food, feeling guilty, you give in. But before you get on your way you notice a man snatch the meal.";
@@ -121,7 +121,7 @@ vector<events> getAllEvents(){
   event4.faction = "Default";
   event4.rep = 2;
 
-  event4.problem[0] = "You see <npcName> lying on the ground, submerged in a sea of empty ale bottles and tobacco pipes. 'What are you doing here?' you ask. <npcName> leaps to their feet in shock. 'WHAT?!?' they yell. 'Sorry, I must've dozed off there for a minute.' they continue, regaining their senses. 'Do you live here?' you ask. [npcName] takes a moment to prepare their response. 'Well...do I live here? Yes! In so much as this is where I sleep I mean'. 'What legal claim have you on this land and building?' you reply. [npcName] takes another moment. 'Well...what legal claim do I have? Some! In so much as I have none at all' they blabber on. 'I beg you don't inform the authorities, good traveller! I see the kindness in your eyes!' they plead.";
+  event4.problem[0] = "You see <npcName> lying on the ground, submerged in a sea of empty ale bottles and tobacco pipes. 'What are you doing here?' you ask. <npcName> leaps to their feet in shock. 'WHAT?!?' they yell. 'Sorry, I must've dozed off there for a minute.' they continue, regaining their senses. 'Do you live here?' you ask. <npcName> takes a moment to prepare their response. 'Well...do I live here? Yes! In so much as this is where I sleep I mean'. 'What legal claim have you on this land and building?' you reply. <npcName> takes another moment. 'Well...what legal claim do I have? Some! In so much as I have none at all' they blabber on. 'I beg you don't inform the authorities, good traveller! I see the kindness in your eyes!' they plead.";
   event4.problem[1] = "A man barges past you and out of the front door. 'A squatter! On my land! Oh this just really isn't my day at all!' he mutters to himself. Upon noticing your presence, he turns to you. 'You there! You seem to be the problem solving type! How do you fancy making a little extra coin as an agent of the underprivileged, overworked, and exceedingly kind landlord population?' he grins. You open your mouth to respond but before you can, the landlord continues. 'Wonderful! Just splendid! I knew you were a first class fellow when first I laid eyes on you. You shall be rewarded my friend! But if you'll excuse me for now, I must go cheer myself up. I'm thinking...raise a few rents? Yes, that should do it!' he says, now slinking away from you. You turn to see a ragged <npcName>, cowering in the corner of the room.";
   event4.problem[2] = "<npcName> slow dances in the centre of the room, taking no notice of your arrival. 'La da di daaa, and a rum dum brum chuuuum, an ounce of blee blee blah yaaaah, and owee wah woh' they sing to themselves. 'Excuse me' you call. <npcName> turns to you. 'Yes yes, oh quite right, another guest for our evening of entertainment don't you know?' he blabbers. 'Please, do sit, make yourself quite comfortable, this is a classy affair after all, don't you know?'. You glance around, noticing the thick layers of grime coating the walls and the floor, the ripped sheets strewn here and there, and a few rats nibbling on some broken glass. 'Are you squatting here?' you ask. 'Squatting? Why of course not, no no no, I inherited this estate and this mansion from my father, as he did with his father before him. Though the decorations were all my doing, don't you know?' he replies. 'Tea?' he inquires, offering you a rusty mug full of mystery liquid.";
 

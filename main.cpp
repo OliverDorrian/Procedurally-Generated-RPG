@@ -1,3 +1,4 @@
+#pragma comment(lib, "winmm.lib")
 #include <iostream>
 #include <stdlib.h>
 #include <fstream>
@@ -5,14 +6,17 @@
 #include <cstring>  
 #include <string>
 #include <random>
-#include <stdlib.h>
 #include <algorithm>
 #include <iterator>
 #include <variant>
+#include <Windows.h>
+#include <mmsystem.h>
 #include "fileHand.cpp"
 #include "eventStructs.cpp"
 #include "intro.cpp"
 #include "preamble.cpp"
+#include "items.cpp"
+#include "title.cpp"
 using namespace std;
 
 // sets file constants
@@ -57,9 +61,226 @@ vector<string> allBarPreamble = getAllBarPreamble();
 vector<string> allHousePreamble = getAllHousePreamble();
 vector<string> allStreetPreamble = getAllStreetPreamble();
 
+vector<healItems> allHealItems = getAllHealItems();
+vector<richItems> allRichItems = getAllRichItems();
+vector<relics> allRelics = getAllRelics();
+
+
+void gap(){
+  cout<<""<<endl;
+}
+
+void textColour(int colour){
+  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colour);
+}
+
+void textFunc(string text){
+  int count = 0;
+  cout<<"  ";
+  for(int i = 0; i < text.length(); i++){
+    cout<<text[i];
+    count++;
+    if((count >= 50) && (isspace(text[i]))){
+      cout<<"\n  ";
+      count = 0;
+    }
+  }
+  gap();
+}
+
+void inputBox(){
+  //cout << " " << char(218); for(int i=0; i<8; i++){cout << char(196);} cout << char(196) << endl;
+//cout << " " << char(179) << " ";
+cout<<"  -> ";
+}
+
+class longBox{
+  private:
+  int h;
+  int v;
+  int bLCorner;
+  int tLCorner;
+  int bRCorner;
+  int tRCorner;
+  int lCross;
+  int rCross;
+  int length;
+
+  public:
+  longBox(int mode, int boxLength){
+    length = boxLength;
+    if(mode == 1){
+      h = 196;
+      v = 179;
+      bLCorner = 192;
+      tLCorner = 218;
+      bRCorner = 217;
+      tRCorner = 191;
+      lCross = 195;
+      rCross = 180;
+    } else if(mode == 2){
+      h = 205;
+      v = 186;
+      bLCorner = 200;
+      tLCorner = 201;
+      bRCorner = 188;
+      tRCorner = 187;
+      lCross = 204;
+      rCross = 185;
+    }
+  }
+
+  void title(string text){
+    cout << " " << char(tLCorner); for(int i=0; i<length; i++){cout << char(h);} cout << char(tRCorner) << endl;
+    cout << " " << char(v) << " " + text; for(int i = 0; i < (length - (text.length() + 1)); i++){cout<<" ";} cout << char(v) << endl;
+    cout << " " << char(lCross); for(int i=0; i<length; i++){cout << char(h);} cout << char(rCross) << endl;
+  }
+
+  void content(string text){
+    cout << " " << char(v) << " " + text; for(int i = 0; i < (length - (text.length() + 1)); i++){cout<<" ";} cout << char(v) << endl;
+  }
+
+  void bottom(){
+    cout << " " << char(bLCorner); for(int i=0; i<length; i++){cout << char(h);} cout << char(bRCorner) << endl;
+  }
+
+  void separator(){
+    cout << " " << char(lCross); for(int i=0; i<length; i++){cout << char(h);} cout << char(rCross) << endl;
+  }
+
+  void top(){
+    cout << " " << char(tLCorner); for(int i=0; i<length; i++){cout << char(h);} cout << char(tRCorner) << endl;
+  }
+
+};
+
+class textBox{
+  public:
+
+  textBox(int mode, string text){
+    if(mode == 1){
+      cout << " " << char(218); for(int i=0; i<(text.length() + 2); i++){cout << char(196);} cout << char(191) << endl;
+      cout << " " << char(179) << " " + text + " " << char(179) << endl;
+      cout << " " << char(192); for(int i=0; i<(text.length() + 2); i++){cout << char(196);} cout << char(217) << endl;
+    } else if(mode == 2){
+      cout << " " << char(201); for(int i=0; i<(text.length() + 2); i++){cout << char(205);} cout << char(187) << endl;
+      cout << " " << char(186) << " " + text + " " << char(186) << endl;
+      cout << " " << char(200); for(int i=0; i<(text.length() + 2); i++){cout << char(205);} cout << char(188) << endl;
+    }
+  }
+
+  textBox(int mode, string text, int length){
+    if(mode == 1){
+      cout << " " << char(218); for(int i=0; i<length; i++){cout << char(196);} cout << char(191) << endl;
+      cout << " " << char(179) << " " + text; for(int i = 0; i < (length - (text.length() + 1)); i++){cout<<" ";} cout << char(179) << endl;
+      cout << " " << char(192); for(int i=0; i<length; i++){cout << char(196);} cout << char(217) << endl;
+    } else if(mode == 2){
+      cout << " " << char(201); for(int i=0; i<length; i++){cout << char(205);} cout << char(187) << endl;
+      cout << " " << char(186) << " " + text; for(int i = 0; i < (length - (text.length() + 1)); i++){cout<<" ";} cout << char(186) << endl;
+      cout << " " << char(200); for(int i=0; i<length; i++){cout << char(205);} cout << char(188) << endl;
+    }
+  }
+
+  textBox(int colour, int mode, string text){
+    if(mode == 1){
+      textColour(colour);
+      cout << " " << char(218); for(int i=0; i<(text.length() + 2); i++){cout << char(196);} cout << char(191) << endl;
+      cout << " " << char(179) << " ";
+      textColour(7);
+      for(int i = 0; i<text.size(); i++){
+        if(text[i] == '|'){
+          textColour(colour);
+          cout<<text[i];
+          textColour(7);
+        } else {
+          cout<<text[i];
+        }
+      }
+      textColour(colour); 
+      cout<< " " << char(179) << endl;
+      cout << " " << char(192); for(int i=0; i<(text.length() + 2); i++){cout << char(196);} cout << char(217) << endl;
+      textColour(7);
+    } else if(mode == 2){
+      textColour(colour);
+      cout << " " << char(201); for(int i=0; i<(text.length() + 2); i++){cout << char(205);} cout << char(187) << endl;
+      cout << " " << char(186) << " ";
+      textColour(7);
+      for(int i = 0; i<text.size(); i++){
+        if(text[i] == '|'){
+          textColour(colour);
+          cout<<text[i];
+          textColour(7);
+        } else {
+          cout<<text[i];
+        }
+      }
+      textColour(colour);
+      cout<< " " << char(186) << endl;
+      cout << " " << char(200); for(int i=0; i<(text.length() + 2); i++){cout << char(205);} cout << char(188) << endl;
+      textColour(7);
+    }
+  }
+};
+
+bool isStringDigit(string input){
+  for(int i=0; i<input.length(); i++){
+    if(!isdigit(input[i])){
+      return false;
+    }
+  }
+  return true;
+}
+
+int numInput(int low, int high){
+  string input;
+  int inputInt;
+  bool passed = false;
+  while(!passed){
+    inputBox();
+    cin >> input;
+    if(!isStringDigit(input)){
+      textBox(4,1,"Invalid input");
+      cin.clear();
+    } else{
+      inputInt = stoi(input);
+      if(inputInt > low-1 && inputInt < high+1){
+        passed = true;
+        return inputInt;
+      } else{
+        textBox(4,1,"Invalid input");
+        cin.clear();
+      }
+    } 
+  }
+  return 0;
+}
+
+string lenCheck(){
+  string input;
+  bool passed = false;
+  while(!passed){
+    inputBox();
+    cin >> input;
+    if(input.length() > 15){
+      textBox(4,1,"Input must be 15 characters or less");
+      cin.clear();
+    } else{
+      passed = true;
+      return input;
+    }
+  }
+  return input;
+}
+
+
 
 void pressKey(){
-  cout << "Press any key to continue" << endl;
+  textBox(1, "Press any key to continue");
+  _getwch();
+}
+
+void intro(){
+  all();
   _getwch();
 }
 
@@ -120,18 +341,6 @@ public:
     return cost;
   }    
   item(){};
-};
-
-class relic: public item{
-private:
-  string blah;
-public:
-  relic(string passedName, string passedDesc, string passedType, int passedCost){
-    name = passedName;
-    description = passedDesc;
-    type = passedType;
-    cost = passedCost;
-  }
 };
 
 // Weapon is given to each person within a One to One relationship
@@ -265,6 +474,7 @@ protected:
   string name; // name of the person
   string race; // which race they belong to
   string desc;
+  string desc2;
   string motto;
   int height; // how tall they are
   int age; // age of the person
@@ -277,35 +487,56 @@ public:
   weapon personWeapon = weapon(); // creates the weapon object. this is a one to one relationship
 
   void personDetail(){ // This class show the information of the person, including weapon object and race information
-    cout<< "===================================="<<endl;
-    cout<< " " + race << endl;
-    cout<< " " + desc << endl;
-    cout<< "------------------------------------"<<endl;
-    cout<< " Name: " << name << endl;
-    cout<< " Age: " << age << endl;
-    cout<< " Height: " << height << " cm"<< endl;
-    cout<< " Gender: " << gender << endl;
-    cout<< " Weapon: " << this->personWeapon.getRarity() + " " + this->personWeapon.getName() << endl;    
-    cout<< " Type: " << this->personWeapon.getWeaponType() << endl;
-    cout<< " Biome: " << this->personWeapon.getBiomeType() << endl;
-    cout<< " Weapon Action: " << this->personWeapon.getItemFromVectorCap() << endl; 
-    cout<< " Faction: "<< this-> faction << endl;
-    cout<<"===================================="<<endl;
-    cout<< "" << endl;
+    longBox box = longBox(2, 80);
+    system("CLS");
+    box.top();
+    box.content(race);
+    box.content(desc);
+    box.content(desc2);
+    box.separator();
+    box.content("Name: " + name);
+    box.content("Age: " + to_string(age));
+    box.content("Height: " + to_string(height) + "cm");
+    box.content("Gender: " + gender);
+    box.content("Faction: " + faction);
+    box.content("Motto: '" + motto + "'");
+    box.bottom();
+    gap();
   }
 
-  virtual void getMotto(){
+  void setMotto(){
     motto = genericMotto.getLineCap(randNumber());
+  }
+
+  string getMotto(){
+    return motto;
+  }
+
+  void header(){
+    textBox(4, 2, this->name + " | Health: " + to_string(this->health) + " | Damage: " + to_string(personWeapon.getMinDmg()) + "-" + to_string(personWeapon.getMaxDmg()));
+  }
+
+  void decreaseHealth(int passedInt){
+    health -= passedInt;
+
   }
 
   // GETTERS
   string getName(){
     return name;
   }
+
+  int getHealth(){
+    return health;
+  }
 };
 
 class orc: public person { // child of person class, this allows for races to implement constructor for person in a different way
 public:
+  void setMotto(){
+    motto = orcMotto.getLineCap(randNumber()); 
+  }
+
   orc(){
     race = "Orc";
     name = orcFileWord.getLineCap(randNumber()) + orcFileWord.getLine(randNumber()) + " the " + orcFileAdjective.getLineCap(randNumber());
@@ -313,12 +544,12 @@ public:
     height = randNumber(heightMin, heightMax);
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Bandit";      
-    desc = "Beefy, brutal, and brainless. \n Orcs like to crush first and ask questions never.";    
+    desc = "Beefy, brutal, and brainless.";
+    desc2= "Orcs like to crush first and ask questions never.";   
+    setMotto(); 
   }
 
-  void getMotto(){
-    motto = orcMotto.getLineCap(randNumber()); 
-  }
+  
 };
 
 class dwarf: public person{ // child of person class, this allows for races to implement constructor for person in a different way
@@ -334,7 +565,9 @@ public:
     height = randNumber(heightMin, heightMax);
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Commoner"; 
-    desc = "Tubby, tough, and tiny. \n 99 tankards of mead on the bar, 99 tankards of mead. \n Take one down and pass it around, 98 tankards of mead on the bar.";   
+    desc = "Tubby, tough, and tiny.";
+    desc2= "99 tankards of mead on the bar, 99 tankards of mead.";   
+    setMotto(); 
   }
 };
 
@@ -352,7 +585,9 @@ public:
     height = randNumber(minElfHeight, maxElfHeight);
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Commoner"; 
-    desc = "Moral, meticulous, and meek. \n Cringe race tbf.";   
+    desc = "Moral, meticulous, and meek.";
+    desc2= "Medieval pencil pushers.";   
+    setMotto(); 
   }
 };
 
@@ -369,7 +604,9 @@ public:
     height = randNumber(heightMin, heightMax);
     age = randNumber(ageMin, ageMax);
     faction = "Commoner";
-    desc = "Nothing special.";   
+    desc = "Just human.";
+    desc2 = "Nothing special.";   
+    setMotto(); 
   }
 };
 
@@ -386,7 +623,9 @@ public:
     height = randNumber(heightMin, heightMax);
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Imperial"; 
-    desc = "Scaled, scary, and sophisticated. \n A cruel crowd of cold blooded crocs.";   
+    desc = "Scaley, scary, and sophisticated.";
+    desc2= "A cruel crowd of cold blooded crocs.";   
+    setMotto(); 
   }
 };
 
@@ -399,7 +638,9 @@ public:
     height = randNumber(heightMin, heightMax);
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Imperial"; 
-    desc = "Smart, solitary, and squidgy. \n Flibugulub buglub fibblug gugblibble.";
+    desc = "Smart, solitary, and squidgy.";
+    desc2= "Flibugulub buglub fibblug gugblibble.";
+    setMotto(); 
   }
 };
 
@@ -412,12 +653,17 @@ public:
     height = randNumber(heightMin, heightMax);
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Merchants Guild"; 
-    desc = "Crafty, cunning, and cuddly. \n Masters in the art of the deal, these cats always land on their feet.";   
+    desc = "Crafty, cunning, and cuddly.";
+    desc2= "Masters in the art of the deal, these cats always land on their feet.";   
+    setMotto(); 
   }
 };
 
 class dog: public person{ // child of person class, this allows for races to implement constructor for person in a different way
 public:
+  void setMotto(){
+    motto = dogMotto.getLineCap(randNumber());
+  }
   dog(){
     race = "Dog";
     name = dogWord.getLineCap(randNumber()) + dogSuffix.getLine(randNumber()) + " " + dogWord.getLineCap(randNumber()) + dogSuffix.getLine(randNumber()); 
@@ -425,12 +671,12 @@ public:
     height = randNumber(heightMin, heightMax);
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Mercenaries Guild"; 
-    desc = "Rough, raring, and righteous. \n They can sniff out anyone...if the price is right.";   
+    desc = "Rough, raring, and righteous.";
+    desc2= "They can sniff out anyone...if the price is right.";   
+    setMotto(); 
   }
 
-  void genMotto(){
-    motto = dogMotto.getLineCap(randNumber());
-  }
+  
 };
 
 class vulture: public person{ // child of person class, this allows for races to implement constructor for person in a different way
@@ -442,7 +688,9 @@ public:
     height = randNumber(heightMin, heightMax);
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Imperial"; 
-    desc = "Funny, feared, and feathered. \n Smooth-talkers of the Imperial realm who love to chew you ear off.";   
+    desc = "Funny, feared, and feathered.";
+    desc2= "Smooth-talkers of the Imperial realm who love to chew you ear off.";   
+    setMotto(); 
   }
 };
 
@@ -460,13 +708,17 @@ public:
     height = randNumber(heightMin, heightMax);
     gender = randNumber(0, 1) == 0 ? "Male" : "Female";
     faction = "Bandit"; 
-    desc = "Charismatic, compact, and crooked. \n Goblin on deez nuts lol.";   
+    desc = "Charismatic, compact, and crooked.";
+    desc2= "Never trust a goblin.";   
+    setMotto(); 
   }
 }; 
 
 class genericItem {
 protected:
   string itemName;
+  string itemDesc;
+  int itemValue;
   int quantity;
 public:
 
@@ -495,14 +747,27 @@ public:
   string getName(){
     return itemName;
   }
+
+  string getDesc(){
+    return itemDesc;
+  }
+
+  int getValue(){
+    return itemValue;
+  }
 };
 
 class healItem: public genericItem{
 protected:
+  healItems item;
   int healingValue;
 public:
   healItem(){
-    itemName = healingWords.getLineCap(randNumber());
+    item = allHealItems[randNumber(0, allHealItems.size())];
+    itemName = item.name;
+    itemDesc = item.desc;
+    itemValue = item.value;
+    healingValue = item.healAmount;
   }
 
   healItem(string passedName){
@@ -510,23 +775,73 @@ public:
   }
 
   int useItem(){
-    this->decQuantity();
+    return healingValue;
+  }
+
+  bool useItemDec(){
+    return this->decQuantity();
+  }
+
+  int getHealValue(){
     return healingValue;
   }
 };
 
 class richItem: public genericItem{
 protected:
-  int healingValue;
+  richItems item;
   int quantity;
 public:
   richItem(){
-    itemName = richWords.getLineCap(randNumber());
+    item = allRichItems[randNumber(0, allRichItems.size())];
+    itemName = item.name;
+    itemDesc = item.desc;
+    itemValue = item.value;
   }
 
   richItem(string passedName){
     itemName = passedName;
   }
+};
+
+class relic{
+  private:
+  relics item;
+  string itemName;
+  string itemDesc;
+  string itemAtt;
+  int itemMod;
+  int itemValue;
+  public:
+  relic(){
+    item = allRelics[randNumber(0, allRelics.size())];
+    itemName = item.name;
+    itemDesc = item.desc;
+    itemValue = item.value;
+    itemMod = item.mod;
+    itemAtt = item.att;
+  }
+
+  string getName(){
+    return itemName;
+  }
+
+  string getDesc(){
+    return itemDesc;
+  }
+
+  int getValue(){
+    return itemValue;
+  }
+
+  int getMod(){
+    return itemMod;
+  }
+
+  string getAtt(){
+    return itemAtt;
+  }
+
 };
 
 class quantItems{
@@ -565,13 +880,26 @@ public:
     }
   }
 
+  void addHealItem(healItem& passedItem){
+    if(!(this->checkIfPresent(passedItem.getName(), allHeals))){
+      allHeals.push_back(passedItem);
+    }
+  }
+
+  void addRichItem(richItem& passedItem){
+    if(!(this->checkIfPresent(passedItem.getName(), allHeals))){
+      allRich.push_back(passedItem);
+    }
+  } 
+
   void geneateQuantItem(){
-    int rndNumber = randNumber(0, 2);
+    int rndNumber = randNumber(0, 1);
     switch (rndNumber){
       case 0:{
         healItem tempHealItem =  healItem();
         if(!(this->checkIfPresent(tempHealItem.getName(), allHeals))){
           allHeals.push_back(tempHealItem);
+          textBox(1, "You find 1 " + tempHealItem.getName());
         }
         break;
       }
@@ -579,6 +907,7 @@ public:
         richItem tempRichItem = richItem();
         if(!(this->checkIfPresent(tempRichItem.getName(), allRich))){
           allRich.push_back(tempRichItem);
+          textBox(1, "You find 1 " + tempRichItem.getName());
         }
         break;       
       }
@@ -605,25 +934,72 @@ public:
   }
 
   void displayItems(){
-    cout << "Inventory" << endl;
-    for (size_t i = 0; i < allHeals.size(); i++){
-      cout << "===========================" << endl;
-      cout<< "Item (" << (i + 1) << "): " << allHeals[i].getName() << endl; 
-      cout << "Quantity: " << allHeals[i].getQuantity() <<endl; 
+    longBox healBox = longBox(2, 60);
+    healBox.title("Heal Items");
+    for (vector<healItem>::size_type i = 0; i != allHeals.size(); i++){
+      healBox.content("Item (" + to_string(i + 1) + "): " + allHeals[i].getName());
+      healBox.content("Info: " + allHeals[i].getDesc());
+      healBox.content("Quantity: " + to_string(allHeals[i].getQuantity()));
+      if(i < allHeals.size()-1){
+        healBox.separator();
+      }
     }
-    cout << "===========================" << endl;
-    for (size_t i = 0; i < allRich.size(); i++){
-      cout << "===========================" << endl;
-      cout<< "Item (" << (i + 1) << "):  " << allRich[i].getName() << endl;
-      cout << "Quantity: " << allRich[i].getQuantity() <<endl; 
+    if (allHeals.size() == 0){
+      healBox.content("None");
     }
-    cout << "===========================" << endl;
+    healBox.bottom();
+    gap();
+
+    longBox richBox = longBox(2, 60);
+    richBox.title("Rich Items");
+    for (vector<richItem>::size_type i = 0; i != allRich.size(); i++){
+      richBox.content("Item (" + to_string(i + 1) + "): " + allRich[i].getName());
+      richBox.content("Info: " + allRich[i].getDesc());
+      richBox.content("Quantity: " + to_string(allRich[i].getQuantity()));
+      if(i < allRich.size()-1){
+        richBox.separator();
+      }
+    }
+    if (allRich.size() == 0){
+      richBox.content("None");
+    }
+    richBox.bottom();
   }
 
-  int getRndHeal(){
-    return allHeals[randNumber(0, allHeals.size())].useItem();
+  int selectHealItem(){
+    int selection;
+    longBox healBox = longBox(2, 60);
+    healBox.title("Heal Items");
+    for (vector<healItem>::size_type i = 0; i != allHeals.size(); i++){
+      healBox.content("Item (" + to_string(i + 1) + "): " + allHeals[i].getName());
+      healBox.content("Info: " + allHeals[i].getDesc());
+      healBox.content("Quantity: " + to_string(allHeals[i].getQuantity()));
+      if(i < allHeals.size()-1){
+        healBox.separator();
+      }
+    }
+    if (allHeals.size() == 0){
+      healBox.content("");
+    }
+    healBox.bottom();
+    gap();
+    selection = numInput(1, allHeals.size());
+    return selection-1;
+
   }
 
+  int getHeal(int selection){
+    int value = allHeals[selection].useItem();
+    if(allHeals[selection].useItemDec() == false){
+      allHeals.erase(allHeals.begin() + selection);
+    }
+    textBox(1, "You healed " + to_string(allHeals[selection].getHealValue()));
+    return value;
+  }
+
+  void removeRichItem(int id){
+    allRich.erase(allRich.begin() + id);
+  }
   // Getters 
   vector<healItem> getHealingItemVector(){
     return allHeals;
@@ -638,6 +1014,7 @@ class inventory{
 protected:
   vector<weapon> playerWeapons;
   quantItems playerQuantityItems;
+  vector<relic> playerRelics;
   int currentWeaponIndex;
 public:
 
@@ -661,16 +1038,41 @@ public:
     playerQuantityItems.addQuantityItem(passedString, passedGroup);
   }
 
+  void addRelic(relic& passedRelic){
+    playerRelics.push_back(passedRelic);
+  }
+
   void displayQuantityItems(){
     playerQuantityItems.displayItems();
   }
 
   void displayAllWeapons(){
+    longBox weaponBox = longBox(2, 60);
+    weaponBox.title("Weapons");
     for (int i = 0; i < playerWeapons.size(); i++){
-      cout << "===========================" << endl;
-      cout << "(" << (i) << ") " << playerWeapons[i].getRarity() + " " + playerWeapons[i].getName() << endl;
+      weaponBox.content("(" + to_string(i+1) + ") " + playerWeapons[i].getRarity() + " " + playerWeapons[i].getName());
+      weaponBox.content("Damage: " + to_string(playerWeapons[i].getMinDmg()) + "-" + to_string(playerWeapons[i].getMaxDmg()));
+      if(i < (playerWeapons.size()-1)){
+        weaponBox.separator();
+      }
     }
-    cout << "===========================" << endl;
+    weaponBox.bottom();
+  }
+
+  void displayAllRelics(){
+    longBox relicBox = longBox(2, 60);
+    relicBox.title("Relics");
+    for (int i = 0; i < playerRelics.size(); i++){
+      relicBox.content("(" + to_string(i + 1) + ") " + playerRelics[i].getName());
+      relicBox.content("Info: " + playerRelics[i].getDesc());
+      if(i < (playerRelics.size()-1)){
+        relicBox.separator();
+      }
+    }
+    if (playerRelics.size() == 0){
+      relicBox.content("None");
+    }
+    relicBox.bottom();
   }
 
   void generateNewWeapon(){
@@ -681,14 +1083,14 @@ public:
   void changeCurrentWeapon(){
     this->displayAllWeapons();
     int tempInput;
-    cout << "Please select a new weapon" << endl;
-    cin >> tempInput;
-    currentWeaponIndex = tempInput;
+    textBox(1, "Please select a new weapon");
+    tempInput = numInput(1, playerWeapons.size());
+    currentWeaponIndex = tempInput-1;
 
   }
 
-  int healPlayer(){
-    return this->playerQuantityItems.getRndHeal();
+  int healPlayer(int selection){
+    return this->playerQuantityItems.getHeal(selection);
   }
 
   // GETTERS
@@ -696,7 +1098,7 @@ public:
     return playerWeapons[currentWeaponIndex];
   }
 
-  quantItems getQuantItems(){
+  quantItems& getQuantItems(){
     return playerQuantityItems;
   }
 };
@@ -708,7 +1110,7 @@ protected:
   int intelligenceAttribute = 10;
   int dreadAttribute = 10;
   int health = 15;
-  int playerGold = 100;
+  int playerGold;
   //Reputation counters
   int comRep = 5; //Commoner reputation
   int impRep = 5; //Imperial reputation
@@ -725,12 +1127,13 @@ protected:
   bool hasRetired = false;
   inventory invObj = inventory();
 public:
-  player(string passedName, string passedFamilyName, string passedRace, string passedGender, string passedMotto){
+  player(string passedName, string passedFamilyName, string passedRace, string passedGender, string passedMotto, int passedGold){
     name = passedName;
     race = passedRace;
     gender = passedGender;
     secondName = passedFamilyName;
     motto = passedMotto;
+    playerGold = passedGold;
     
     if(passedRace == "Human"){
       speechAttribute += 1;
@@ -830,35 +1233,40 @@ public:
   }
 
   void displayPlayerInfo(){
-    cout<< "===================================="<<endl;
-    cout<< " " + this->secondName + " clan" << endl;
-    cout<< "------------------------------------"<<endl;
-    cout<< " Name: " << this->name + " " + this->secondName<< endl;
-    cout<< " Gender: " << this->gender << endl;
-    cout<< " Race: " << this->race<< endl; 
-    cout<< " Strength: " << this->strengthAttribute << endl;
-    cout<< " Speech: " << this->speechAttribute << endl;
-    cout<< " Intelligence: " << this->intelligenceAttribute << endl;   
-    cout<< " Dread: " << this->dreadAttribute << endl;
-    cout<< " Commoner Rep: "<< comRep <<endl;
-    cout<< " Imperial Rep: "<< impRep <<endl;
-    cout<< " Bandit Rep: "<< banRep <<endl;
-    cout<< " Merchant Rep: "<< merchantRep <<endl;
-    cout<< " Mercenary Rep: "<< mercRep <<endl;
-    cout<< "------------------------------------"<<endl;
-    cout<< "===================================="<<endl;
+    system("CLS");
+    longBox info = longBox(2, 60);
+    info.title(this->secondName + " clan");
+    info.content("          Name: " + this->name + " " + this->secondName);
+    info.content("        Gender: " + this->gender);
+    info.content("          Race: " + this->race);
+    info.separator();
+    info.content("      Strength: " + to_string(this->strengthAttribute));
+    info.content("        Speech: " + to_string(this->speechAttribute));
+    info.content("  Intelligence: " + to_string(this->intelligenceAttribute));
+    info.content("         Dread: " + to_string(this->dreadAttribute));
+    info.separator();
+    info.content("  Commoner Rep: " + to_string(comRep));
+    info.content("  Imperial Rep: " + to_string(impRep));
+    info.content("    Bandit Rep: " + to_string(banRep));
+    info.content("  Merchant Rep: " + to_string(merchantRep));
+    info.content(" Mercenary Rep: " + to_string(mercRep));
+    info.bottom();
+
     cout<< "" << endl;
-    cout<< "====================================" << endl;
-    cout<< " Weapon" << endl;
-    cout<< "------------------------------------"<<endl;
-    cout<<" " + invObj.getCurrentWeapon().getRarity() + " " + invObj.getCurrentWeapon().getName()<<endl;
-    cout<<" Damage: " << invObj.getCurrentWeapon().getMinDmg() << "-" << invObj.getCurrentWeapon().getMaxDmg()<<endl;
-    cout<< "====================================" << endl;
+    textBox(2, "Gold: " + to_string(playerGold), 60);
     cout<< "" << endl;
-    cout<< "====================================" << endl;
-    cout<< " Inventory" << endl;
-    cout<< "------------------------------------"<<endl;
-    cout<<"====================================" << endl;
+
+    longBox weaponBox = longBox(2, 60);
+    weaponBox.title("Weapon");
+    weaponBox.content(invObj.getCurrentWeapon().getRarity() + " " + invObj.getCurrentWeapon().getName());
+    weaponBox.content("Damage: " + to_string(invObj.getCurrentWeapon().getMinDmg()) + "-" + to_string(invObj.getCurrentWeapon().getMaxDmg()));
+    weaponBox.bottom();
+    cout<< "" << endl;
+
+    invObj.displayAllRelics();
+    cout<< "" << endl;
+    invObj.displayQuantityItems();
+    cout<< "" << endl;
   }
 
   int getRep(string passsedRepType){
@@ -879,40 +1287,67 @@ public:
   void addRep(string passedRepType){
     if(passedRepType == "Commoner"){
       comRep += 1;
+      textBox(1, "Commoner rep increased");
     } else if (passedRepType == "Imperial"){
       impRep += 1;
+      textBox(1, "Imperial rep increased");
     } else if (passedRepType == "Bandit"){
       banRep += 1;
+      textBox(1, "Bandit rep increased");
     } else if (passedRepType == "Merchant"){
-      merchantRep = 1;
+      merchantRep += 1;
+      textBox(1, "Merchant rep increased");
     } else if (passedRepType == "Mercenary"){
       mercRep += 1;
+      textBox(1, "Mercenary rep increased");
     }
   }
 
   void removeRep(string passedRepType){
     if(passedRepType == "Commoner"){
       comRep -= 1;
+      textBox(1, "Commoner rep decreased");
     } else if (passedRepType == "Imperial"){
       impRep -= 1;
+      textBox(1, "Imperial rep decreased");
     } else if (passedRepType == "Bandit"){
       banRep -= 1;
+      textBox(1, "Bandit rep decreased");
     } else if (passedRepType == "Merchant"){
       merchantRep -= 1;
+      textBox(1, "Merchant rep decreased");
     } else if (passedRepType == "Mercenary"){
       mercRep -= 1;
+      textBox(1, "Mercenary rep decreased");
     }
   }
 
   void consumeHealItem(){
       if (this->getInventory().getQuantItems().getHealingItemVector().size() == 0 )
       {
-        cout << "There are no items that you can use to heal you!" << endl;
+        textBox(1, "There are no items that you can use to heal you!");
         pressKey();
       } else{
-        this->increaseHealth(this->invObj.healPlayer());
+        int selection = getInventory().getQuantItems().selectHealItem();
+        this->increaseHealth(this->invObj.healPlayer(selection));
+        pressKey();
       }
   }
+
+ void addRelicMod(relic& passedRelic){
+    if(passedRelic.getAtt() == "Dread"){
+      setDread(getDread() + passedRelic.getMod());
+    }
+    if(passedRelic.getAtt() == "Strength"){
+      setStrength(getStrength() + passedRelic.getMod());
+    }
+    if(passedRelic.getAtt() == "Intelligence"){
+      setIntelligence(getIntelligence() + passedRelic.getMod());
+    }
+    if(passedRelic.getAtt() == "Speech"){
+      setSpeech(getSpeech() + passedRelic.getMod());
+    }
+ }
 
   // SETTERS
   void setRetired(bool passedBool){
@@ -943,20 +1378,22 @@ public:
   }
 
   void decreaseHealth(int passedInt, string passedNPC){
-    cout << "Your Health: " << this->getHealth() << " has been decreased by: " << passedInt << "!"  <<  endl;
+    //cout << "Your Health: " << this->getHealth() << " has been decreased by: " << passedInt << "!"  <<  endl;
     health -= passedInt;
-    cout << "Your health is: " << this->getHealth() << endl;
-    if (health < 0){
-      hasDied == true;
+    //cout << "Your health is: " << this->getHealth() << endl;
+    if (health <= 0){
+      hasDied = true;
       killedBy = passedNPC;
     }
 
   }
 
   void increaseHealth(int passedInt){
-    cout << "Your Health: " << this->getHealth() << " has been incerased by: " << passedInt << "!"  <<  endl;
     health += passedInt;
-    cout << "Your health now is: " << this->getHealth() << endl;
+  }
+
+  void header(){
+    textBox(1, 2, this->name + " " + this->secondName + " | Health: " + to_string(this->health) + " | Damage: " + to_string(invObj.getCurrentWeapon().getMinDmg()) + "-" + to_string(invObj.getCurrentWeapon().getMaxDmg()));
   }
 
   // Getters
@@ -971,6 +1408,10 @@ public:
   string getName(){
     string fullName = name + " " + secondName;
     return fullName;
+  }
+
+  string getMotto(){
+    return motto;
   }
 
   string getGender(){
@@ -1026,7 +1467,7 @@ protected:
   string familyName;
   string motto;
   string race; 
-  int familyGold = 100;
+  int familyGold = 25;
   int familyPrestige = 0;
   int currentPlayerIndex = -1;
   vector<player> allDecedents;
@@ -1038,39 +1479,51 @@ public:
     race = passedRace; 
   }
 
-  void generateNewPlayer(string passedFamilyName, string passedMotto, string passedRace){
+  void generateNewPlayer(string passedFamilyName, string passedMotto, string passedRace, int passedGold){
     currentPlayerIndex += 1;
-    cout<<"Please Enter your First Name"<<endl;
-    cout<<"First Name: ";
+    textBox(2, "Please enter your first Name");
     string playerNameInput;
-    cin >> playerNameInput;
-    system("CLS");
+    playerNameInput = lenCheck();
+    gap();
 
-    cout<<"Please enter your gender(Kindly please capitalize)"<<endl;
-    cout<<"Gender: ";
+
+    textBox(2, "Please select a gender");
+    textBox(1, "(1)  Male", 15);
+    textBox(1, "(2)  Female", 15);
+    int selection;
     string playerGenderInput;
-    cin>> playerGenderInput;
+    selection = numInput(1, 2);
+    switch(selection){
+      case 1:
+        playerGenderInput = "Male";
+        break;
+      case 2:
+        playerGenderInput = "Female";
+        break;
+    }
     system("CLS");
 
-    player tempPlayer = player(playerNameInput, passedFamilyName, passedRace, playerGenderInput, passedMotto);
+    player tempPlayer = player(playerNameInput, passedFamilyName, passedRace, playerGenderInput, passedMotto, passedGold);
     allDecedents.push_back(tempPlayer);
   }
 
   void familyStories(){
+  longBox box = longBox(1, 60);
    for(int i = 0 ; i < allDecedents.size(); i++){
-     cout << "=========================" << endl; 
-     cout << allDecedents[i].getName() << endl;
+     box.title(allDecedents[i].getName());
      if (allDecedents[i].getPlayerStatus()){
-        cout << "You where killed by: "<<allDecedents[i].getNpcKiller() << endl;
+        box.content("You were killed by: " + allDecedents[i].getNpcKiller());
      } else{
-       cout << "You lived till old age!" << endl;
+       box.content("You lived till old age!");
      }
-     cout << "You contributed " <<  allDecedents[i].getGold() << " gold to the family cause!" << endl << endl;
+     box.content("You contributed " +  to_string(allDecedents[i].getGold()) + " gold to the family cause!");
+     box.bottom();
+     gap();
    }
   }
 
   // SETTERS
-  void setFamilyGold(int passedGold){
+  void increaseFamilyGold(int passedGold){
     familyGold += passedGold;
   }
 
@@ -1143,7 +1596,7 @@ public:
     eventFaction = currentEvent.faction;
     
     // Functions that create the event NPC based on the events faction
-    int tempInt = randNumber(0, 7);
+    int tempInt = randNumber(0, 9);
     if (eventFaction == "Default"){
       switch(tempInt){
       case 0: {
@@ -1151,6 +1604,7 @@ public:
         npcWeaponName = eventNpc.personWeapon.getName();
         npcName = eventNpc.getName();
         eventRace = "Human";
+        eventFaction = "Commoner";
         break;
       }
       case 1: {
@@ -1158,6 +1612,7 @@ public:
         npcWeaponName = eventNpc.personWeapon.getName();
         npcName = eventNpc.getName();
         eventRace = "Dwarf";
+        eventFaction = "Commoner";
         break;
       }
       case 2: {
@@ -1165,6 +1620,7 @@ public:
         npcWeaponName = eventNpc.personWeapon.getName();
         npcName = eventNpc.getName();
         eventRace = "Elf";
+        eventFaction = "Commoner";
         break;
       }
       case 3: {
@@ -1172,6 +1628,7 @@ public:
         npcWeaponName = eventNpc.personWeapon.getName();
         npcName = eventNpc.getName();
         eventRace = "Lizard";
+        eventFaction = "Imperial";
         break;
       }
       case 4: {
@@ -1179,6 +1636,7 @@ public:
         npcWeaponName = eventNpc.personWeapon.getName();
         npcName = eventNpc.getName();
         eventRace = "Cephalopoid";
+        eventFaction = "Imperial";
         break;
       }
       case 5: {
@@ -1186,6 +1644,7 @@ public:
         npcWeaponName = eventNpc.personWeapon.getName();
         npcName = eventNpc.getName();
         eventRace = "Vulture";
+        eventFaction = "Imperial";
         break;
       }
       case 6: {
@@ -1193,6 +1652,7 @@ public:
         npcWeaponName = eventNpc.personWeapon.getName();
         npcName = eventNpc.getName();
         eventRace = "Orc";
+        eventFaction = "Bandit";
         break;
       }
       case 7: {
@@ -1200,6 +1660,23 @@ public:
         npcWeaponName = eventNpc.personWeapon.getName();
         npcName = eventNpc.getName();
         eventRace = "Goblin";
+        eventFaction = "Bandit";
+        break;
+      }
+      case 8: {
+        eventNpc = cat();
+        npcWeaponName = eventNpc.personWeapon.getName();
+        npcName = eventNpc.getName();
+        eventRace = "Cat";
+        eventFaction = "Merchant";
+        break;
+      }
+      case 9: {
+        eventNpc = dog();
+        npcWeaponName = eventNpc.personWeapon.getName();
+        npcName = eventNpc.getName();
+        eventRace = "Dog";
+        eventFaction = "Mercenary";
         break;
       }
     }
@@ -1312,17 +1789,18 @@ public:
   int diceRoll(string name, int mod){ // Dice roll function that rolls a D20
     int roll = ((randNumber(0, 20)) + 1); // Grabs a number between 0 and 19
     int number = roll + mod; 
-    cout<<name + " rolled " << number << endl;   
     string op = (mod > 0) ? "+": "";
     if (mod != 0){
-      cout << " (" <<roll<<op<<mod<<")" << endl; // displays who rolled, and the score they got
+      textBox(1, name + " rolled " + to_string(number) + " (" + to_string(roll) + op + to_string(mod) + ")"); // displays who rolled, and the score they got
+    } else {
+      textBox(1, name + " rolled " + to_string(number));
     }
     return number; // returns the dice roll
   }
 
   int diceRoll(string name){ // Dice roll function that rolls a D20
     int number = ((randNumber(0, 20)) + 1); // Grabs a number between 0 and 19
-    cout<<name + " rolled " << number << endl;
+    textBox(1, name + " rolled " + to_string(number));
     return number; // returns the dice roll
   }
 
@@ -1354,58 +1832,78 @@ public:
     return passedString;
   }
 
-  int fightLoop(player& passedPlayer, person& eventNpc){
-    int playerHealth = 15;
-    int npcHealth = 15;
-    cout<<"-=== " + passedPlayer.getName() + " VS " + eventNpc.getName() + " ===-" << endl;
-    cout<<"Player health: " << playerHealth << endl;
-    cout<<"Enemy health: " << npcHealth <<endl;
-    cout<<""<<endl;
 
+  int fightLoop(player& passedPlayer, person& eventNpc){
+    longBox box = longBox(1, 30);
+    int firstLoop = 0;
     do { 
-      pressKey();
+      system("CLS");
+      textBox(2, this->eventName, 60);
+      passedPlayer.header();
+      eventNpc.header();
+      if(firstLoop == 0){
+        textFunc("'" + passedPlayer.getMotto() + "' you say.");
+        textFunc("'" + eventNpc.getMotto() + "' " + eventNpc.getName() + " replies.");
+        firstLoop++;
+      }
+      box.title("Options");
+      box.content("(1) Attack");
+      box.content("(2) Heal");
+      box.content("(3) Change weapon");
+      box.bottom();
+      int selection;
+      selection = numInput(1, 3);
+      switch(selection){
+        case 2:
+          passedPlayer.consumeHealItem();
+          break;
+        case 3:
+          passedPlayer.getInventory().changeCurrentWeapon();
+          break;
+      }
+      system("CLS");
+      textBox(2, this->eventName, 60);
+      passedPlayer.header();
+      eventNpc.header();
+      gap();
       int playerDamage = damageCalc(diceRoll("Player", (passedPlayer.getStrength() - 10)), passedPlayer.getInventory().getCurrentWeapon().getDamage()); // Generates the damage the player will do
       if (playerDamage <= -1){
-        cout<<passedPlayer.getName() + " hurt themselves trying to attack!"<<endl;
-        playerHealth --;
+        textFunc(passedPlayer.getName() + " hurt themselves trying to attack!");
+        passedPlayer.decreaseHealth(1, passedPlayer.getName());
       }else if (playerDamage == 0){
-        cout<<passedPlayer.getName() + " misses!"<<endl;
+        textFunc(passedPlayer.getName() + " misses!");
       }else{
-        cout << passedPlayer.getName() + " " + passedPlayer.getInventory().getCurrentWeapon().getItemFromVector() + " " + eventNpc.getName() + " with their " + passedPlayer.getInventory().getCurrentWeapon().getRarity() + " " +passedPlayer.getInventory().getCurrentWeapon().getName() + " dealing " << playerDamage << " damage" << endl;
-        npcHealth = npcHealth - playerDamage;      
+        textFunc(passedPlayer.getName() + " " + passedPlayer.getInventory().getCurrentWeapon().getItemFromVector() + " " + eventNpc.getName() + " with their " + passedPlayer.getInventory().getCurrentWeapon().getRarity() + " " +passedPlayer.getInventory().getCurrentWeapon().getName() + " dealing " + to_string(playerDamage) + " damage");
+        eventNpc.decreaseHealth(playerDamage);    
       }
-      cout<<""<<endl;
 
-      cout<<"Player health: " << playerHealth << endl;
-      cout<<" Enemy health: " << npcHealth <<endl;
-      cout<<""<<endl;
       pressKey();
-      if(npcHealth > 0){
+      if(eventNpc.getHealth() > 0){
+        system("CLS");
+        textBox(2, this->eventName, 60);
+        passedPlayer.header();
+        eventNpc.header();
+        gap();
         int npcDamage = damageCalc(diceRoll("NPC"), eventNpc.personWeapon.getDamage());
         if (npcDamage <= -1){
-          cout<<eventNpc.getName() + " hurt themselves trying to attack!"<<endl;
-          npcHealth --;
+          textFunc(eventNpc.getName() + " hurt themselves trying to attack!");
+          eventNpc.decreaseHealth(1);
         } else if (npcDamage == 0){
-          cout<<eventNpc.getName() + " misses!"<<endl;
+          textFunc(eventNpc.getName() + " misses!");
         } else{
-          cout << eventNpc.getName() + " " + eventNpc.personWeapon.getItemFromVector() + " " + passedPlayer.getName() + " with their " + eventNpc.personWeapon.getRarity() + " " + eventNpc.personWeapon.getName() + " dealing " << npcDamage << " damage" << endl;
-          playerHealth = playerHealth - npcDamage;
+          textFunc(eventNpc.getName() + " " + eventNpc.personWeapon.getItemFromVector() + " " + passedPlayer.getName() + " with their " + eventNpc.personWeapon.getRarity() + " " + eventNpc.personWeapon.getName() + " dealing " + to_string(npcDamage) + " damage");
+          passedPlayer.decreaseHealth(npcDamage, eventNpc.getName());
         }
-        cout<<""<<endl;
-        cout<<"Player health: " << playerHealth << endl;
-        cout<<" Enemy health: " << npcHealth <<endl;
-        cout<<""<<endl;
-      } else{
-        cout << npcName + " has died!" << endl;
-        return 1;
-      }
-    }while(npcHealth > 0 && playerHealth > 0);
-    if(playerHealth <= 0){
-      cout << passedPlayer.getName() + " loses!" << endl;
+
+      } 
+      pressKey();
+    }while(eventNpc.getHealth() > 0 && passedPlayer.getHealth() > 0);
+    if(passedPlayer.getHealth() <= 0){
+      textBox(2, passedPlayer.getName() + " loses!");
       return 0;
     }
-    if(npcHealth <= 0){
-      cout << npcName + " has died!" << endl;
+    if(eventNpc.getHealth() <= 0){
+      textBox(2, npcName + " has died!");
       return 1;
     }
     return 0;
@@ -1431,19 +1929,24 @@ public:
   }
 
   void startEvent(player& passedPlayer, person& eventNpc){
-    cout << "===================================="<<endl;
-    cout << passedPlayer.getName() << " and the " << this->eventName << endl; 
-    cout << "====================================" << endl;
-    cout << introText << endl; 
-    cout << preAmbleText << endl;
-    cout << problemText << endl;
-    cout << "====================================" << endl;
-    cout << "(1) Attack" << endl;
-    cout << "(2) Persuasion" << endl; 
-    cout << "(3) Dread" << endl;
-    cout << "(4) Intelligence" << endl;
-    cout << "(5) Play Guitar " <<endl;
-    cout << "====================================" << endl;
+    system("CLS");
+    longBox box = longBox (2, 60);
+    textBox(2, this->eventName, 60);
+    textFunc(introText);
+    gap();
+    textFunc(preAmbleText);
+    gap();
+    textFunc(problemText);
+    //cout << introText << endl; 
+    //cout << preAmbleText << endl;
+    //cout << problemText << endl;
+    box.title("Actions");
+    box.content("(1) Attack");
+    box.content("(2) Persuasion");
+    box.content("(3) Dread");
+    box.content("(4) Intelligence");
+    box.content("(5) Play Guitar");
+    box.bottom();
 
     // If the player has a better reputation with the events faction, their dread and speech rolls will be increased
     // however, if the player has a negative reputation, their rolls are decreased
@@ -1465,59 +1968,92 @@ public:
     }
 
     int tempConsoleInput;
-    cin >> tempConsoleInput;
+    tempConsoleInput = numInput(1, 5);
+    system("CLS");
+    textBox(2, this->eventName, 60);
     switch(tempConsoleInput){
       case 1: // Returns Boolea 
         if (fightLoop(passedPlayer, eventNpc)) {
-          cout << "Attack success." << endl;
-          cout << processText(currentEvent.attackSuccess) << endl;
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          passedPlayer.header();
+          eventNpc.header();
+          textBox(1, "Attack success");
+          textFunc(processText(currentEvent.attackSuccess));
+          passedPlayer.removeRep(eventFaction);
+          this->eventSuccess(passedPlayer);
         } else {
-          cout << endl << "Attack fail." << endl;
-          cout << processText(currentEvent.attackFailure) << endl;
-          this->eventFail(passedPlayer);
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          passedPlayer.header();
+          eventNpc.header();
+          textBox(1, "Attack fail");
+          textFunc(processText(currentEvent.attackFailure));
         }
       break;
       case 2:
         if (diceRoll("Player", ((passedPlayer.getSpeech() - 10)+repMod)) >= speechCheck) { // speech check
-          cout <<"Persuasion Success." << endl;
-          cout << processText(currentEvent.persuasionSuccess) << endl;
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          textBox(1, "Persuasion Success");
+          textFunc(processText(currentEvent.persuasionSuccess));
+          passedPlayer.addRep(eventFaction);
           this->eventSuccess(passedPlayer);
         } else{
-          cout << "Persuasion Fail." << endl;
-          cout << processText(currentEvent.persuasionFail) << endl;
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          textBox(1, "Persuasion Fail");
+          textFunc(processText(currentEvent.persuasionFail));
+          passedPlayer.removeRep(eventFaction);
           this->eventFail(passedPlayer);
         }
       break;
       case 3:
         if(diceRoll("Player", ((passedPlayer.getDread() - 10)+repMod)) >= dreadCheck){ // dread check
-          cout << "Dread Success." << endl;
-          cout << processText(currentEvent.dreadSuccess) << endl;
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          textBox(1, "Dread Success");
+          textFunc(processText(currentEvent.dreadSuccess));
+          passedPlayer.addRep(eventFaction);
           this->eventSuccess(passedPlayer);
         } else{
-          cout << "Dread Fail." << endl;
-          cout << processText(currentEvent.dreadFail) << endl;
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          textBox(1,"Dread Fail");
+          textFunc(processText(currentEvent.dreadFail));
+          passedPlayer.removeRep(eventFaction);
           this->eventFail(passedPlayer);
         }
       break;
       case 4:
         if(diceRoll("Player", (passedPlayer.getIntelligence() - 10) + repMod) >= intCheck){ // intelligence check
-          cout << "Intelligence Success." << endl;
-          cout << processText(currentEvent.intelligenceSuccess) << endl;
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          textBox(1, "Intelligence Success");
+          textFunc(processText(currentEvent.intelligenceSuccess));
+          passedPlayer.addRep(eventFaction);
           this->eventSuccess(passedPlayer);
         } else{
-          cout << "Intelligence Fail." << endl;
-          cout << processText(currentEvent.intelligenceFail) << endl;
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          textBox(1, "Intelligence Fail");
+          textFunc(processText(currentEvent.intelligenceFail));
+          passedPlayer.removeRep(eventFaction);
           this->eventFail(passedPlayer);
         }
       break;
       case 5:
         if(diceRoll("Player", 0) >= 11){ // guitar is a skill-less roll, success is a 50/50, but no reputation will be lost if you fail. This option gives less risk and less reward.
-          cout << "Guitar Success." << endl;
-          cout << processText(currentEvent.guitarSuccess) << endl;
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          textBox(1, "Guitar Success");
+          textFunc(processText(currentEvent.guitarSuccess));
           this->eventSuccess(passedPlayer);
         } else{
-          cout << "Guitar Fail." << endl;
-          cout << processText(currentEvent.guitarFail) << endl;
+          system("CLS");
+          textBox(2, this->eventName, 60);
+          textBox(1, "Guitar Fail");
+          textFunc(processText(currentEvent.guitarFail));
           this->eventFail(passedPlayer);
         }
       break;
@@ -1525,12 +2061,11 @@ public:
   }
 
   void eventSuccess(player& passedPlayer){
-    int randNum = randNumber(0, 4);
-    passedPlayer.addRep(eventFaction);
+    int randNum = randNumber(0, 3);
     switch (randNum){
     case 0:{
       int tempGold = randNumber(20, 100);
-      cout<< "You Gain: " << tempGold << " gold." << endl;
+      textBox(1, "You Gain: " + to_string(tempGold) + " gold");
       passedPlayer.addGold(tempGold);
       break;
     }
@@ -1538,33 +2073,192 @@ public:
       passedPlayer.getInventory().rndQuantityItem();
       break;
     case 2:{
-      cout << "Your good fortune applies to your health as well" << endl;
-      passedPlayer.increaseHealth(randNumber(5, 10));
+      textBox(1, "Your good fortune applies to your health as well");
+      int rand = randNumber(5, 10);
+      passedPlayer.increaseHealth(rand);
+      textBox(1, "You heal " + to_string(rand) + " HP");
       break;      
     }
-    case 3:
-      cout << "You found a cool new weapon" << endl; 
+    case 3: 
+      textBox(1,"You found a cool new weapon");
       passedPlayer.getInventory().generateNewWeapon();
       break;
     }
   }
 
   void eventFail(player& passedPlayer){
-    int randNum = randNumber(0, 2);
-    passedPlayer.removeRep(eventFaction);
+    int randNum = randNumber(0, 1);
 
     switch (randNum){
     case 0:{
-      int tempGold = randNumber(20, 100);
-      cout<< "You Loose: -" << tempGold << " gold." << endl;
+      int tempGold = randNumber(10, 40);
+      textBox(1, "You lose " + to_string(tempGold) + " gold");
       passedPlayer.removeGold(tempGold);
       break;
     }
     case 1: // Gives Player Item
-      passedPlayer.decreaseHealth(randNumber(5, 10), this->npcName);
+      int rand = randNumber(2, 5);
+      passedPlayer.decreaseHealth(randNumber(2, 5), this->npcName);
+      textBox(1, "Your poor fortune applies to your health as well");
+      textBox(1, "You lose " + to_string(rand) + " HP");
       break;
     }
   }
+};
+
+class store{ // Event that lets player buy items
+  private:
+    cat catshier = cat();
+    int gold;
+    int selection;
+
+    // instantiation of placeholder items, these will eventually be randomly generated
+
+    healItem item1 = healItem();
+    healItem item2 = healItem();
+    healItem item3 = healItem();
+    relic item4 = relic();
+    vector<healItem> stock; // adds the items to the stores stock vector
+
+
+  public:
+
+  int discountCheck(int cost, int rep){
+    if(rep >= 10 && rep <= 19){ // If the player has this range of merchant rep, they receive an approximate 10% discount
+        cost = cost - (cost / 10);
+      }else if(rep >= 20){ // If the player has above this level of merchant rep, they receive an approximate 20% discount
+        cost = cost - (cost / 20);
+      } else if(rep <= 0){ // If the player has below this level of merchant rep, they pay an approximate extra 10% discount
+        cost = cost + (cost / 10);
+      }
+    return cost;
+  }
+
+  void catAscii(){
+        cout<<R"( 
+  ____________________________
+ |                   |____|   |
+ |      |\___/|     |      |  |
+ |     / _   ^ \    | OPEN |  |
+ |    (  O>o<O  )   |______|  |
+ |     \_  V  _/              |
+ |     __)   (__              |
+ |    /  \___/  \             |
+ |___/__|_____|__\____________|
+ |____________________________|
+
+     )"<<endl;
+  }
+
+  store(player& passedPlayer){
+    system("CLS");
+    gold = passedPlayer.getGold(); //gets the players gold amount
+
+    // adds the items to the stores stock vector
+    stock.push_back(item1);
+    stock.push_back(item2);
+    stock.push_back(item3);
+    textBox(2, catshier.getName() + "'s Store");
+    catAscii();
+    textFunc("You enter the store. " + catshier.getName() +" greets you with a smile.");
+    textFunc("'Can I interest you in anything?' they say.");
+    gap();
+    textBox(1, "(1) Buy Items ");
+    textBox(1, "(2) Sell items");
+    int choice;
+    choice = numInput(1, 2);
+    switch(choice){
+      case 1:
+      {
+      system("CLS");
+      textBox(2, catshier.getName() + "'s Store");
+      catAscii();
+      textBox(1, "Your gold: " + to_string(gold));
+      longBox box = longBox(2, 50);
+      box.title("FOR SALE");
+      for(vector<healItem>::size_type i=0; i != stock.size(); i++){
+        box.content("(" + to_string(i+1) + ")");
+        box.content("Name: " + stock[i].getName());
+        box.content("Info: " + stock[i].getDesc());
+        box.content("Cost: " + to_string(discountCheck(stock[i].getValue(),passedPlayer.getRep("Merchant"))) + " gold");
+        box.separator();
+      }
+      box.content("(4)");
+      box.content("Name: " + item4.getName());
+      box.content("Info: " + item4.getDesc());
+      box.content("Cost: " + to_string(discountCheck(item4.getValue(),passedPlayer.getRep("Merchant"))) + " gold");
+      box.bottom();
+      gap();
+      textBox(1, "Select item number or type 0 to leave");
+      selection = numInput(0, 4);
+      selection --;
+      if(selection >= 0 && selection < 3){
+        if(passedPlayer.getGold() >= discountCheck(stock[selection].getValue(),passedPlayer.getRep("Merchant"))){ //checks the player can actually purchase the item
+          passedPlayer.getInventory().getQuantItems().addHealItem(stock[selection]); // adds the item to the players inventory
+          passedPlayer.removeGold((discountCheck(stock[selection].getValue(),passedPlayer.getRep("Merchant")))); // Takes the cost of the item away from the players gold
+          passedPlayer.addRep("Merchant");
+          textBox(1, stock[selection].getName() + " added to inventory"); 
+          pressKey();
+        } else{
+          textBox(1,"Not enough gold");
+          pressKey();
+        }
+        }else if (selection == 3){
+          if(passedPlayer.getGold() >= discountCheck(item4.getValue(),passedPlayer.getRep("Merchant"))){ //checks the player can actually purchase the item
+          passedPlayer.getInventory().addRelic(item4); // adds the item to the players inventory
+          passedPlayer.addRelicMod(item4);
+          passedPlayer.removeGold((discountCheck(item4.getValue(),passedPlayer.getRep("Merchant")))); // Takes the cost of the item away from the players gold
+          passedPlayer.addRep("Merchant");
+          textBox(1, item4.getName() + " added to inventory"); 
+          pressKey();
+        }else{
+          textBox(1,"Not enough gold");
+          pressKey();
+        }
+      }
+      break;
+      }
+
+      case 2:
+      {
+      system("CLS");
+      longBox box = longBox(2, 50);
+      textBox(2, catshier.getName() + "'s Store");
+      catAscii();
+      textBox(1, "Your gold: " + to_string(gold));
+      box.title("Your Inventory");
+      if(passedPlayer.getInventory().getQuantItems().getRichItemVector().size() == 0){
+        box.content("Empty");
+      }
+      for(vector<richItem>::size_type i=0; i != passedPlayer.getInventory().getQuantItems().getRichItemVector().size(); i++){
+        box.content("(" + to_string(i+1) + ")");
+        box.content("Name: " + passedPlayer.getInventory().getQuantItems().getRichItemVector()[i].getName());
+        box.content("Info: " + passedPlayer.getInventory().getQuantItems().getRichItemVector()[i].getDesc());
+        box.content("Cost: " + to_string(passedPlayer.getInventory().getQuantItems().getRichItemVector()[i].getValue()) + " gold");
+        if(i < passedPlayer.getInventory().getQuantItems().getRichItemVector().size() -1){
+          box.separator();
+        }
+      }
+      box.bottom();
+      gap();
+      textBox(1, "Select item number or type 0 to leave");
+      selection = numInput(0, passedPlayer.getInventory().getQuantItems().getRichItemVector().size());
+      selection --;
+      if(selection < passedPlayer.getInventory().getQuantItems().getRichItemVector().size()){
+        passedPlayer.addGold(passedPlayer.getInventory().getQuantItems().getRichItemVector()[selection].getValue());
+        textBox(1, passedPlayer.getInventory().getQuantItems().getRichItemVector()[selection].getName() + " sold"); 
+        passedPlayer.getInventory().getQuantItems().removeRichItem(selection); // adds the item to the players inventory
+        pressKey();
+      }
+      break;
+      }
+
+      default:
+      break;
+    }
+  }
+  
+
 };
 
 class node{
@@ -1633,10 +2327,10 @@ private:
     }
   }
 public:
-  binTree(int passedSize){
+  binTree(const int passedSize){
     sizeOfTree = passedSize;
 
-    int tempArrayOfIndex[passedSize];
+    int tempArrayOfIndex[100];
     for (int i = 0; i < (passedSize); i++){
       tempArrayOfIndex[i] = i;
     } 
@@ -1744,29 +2438,253 @@ public:
   }
 };
 
+void raceInfo(){
+  bool breakFree = false;
+  while(!breakFree){
+    system("CLS");
+    textBox(2, "Please select a race");
+    textBox(1, "(1)  Orc", 20);
+    textBox(1, "(2)  Elf", 20);
+    textBox(1, "(3)  Dwarf", 20);
+    textBox(1, "(4)  Human", 20);
+    textBox(1, "(5)  Goblin", 20);
+    textBox(1, "(6)  Cat", 20);
+    textBox(1, "(7)  Dog", 20);
+    textBox(1, "(8)  Lizard", 20);
+    textBox(1, "(9)  Vulture", 20);
+    textBox(1, "(10) Cephalopoid", 20);
+    textBox(1, "(11) Back", 20);
+    int selection;
+    selection = numInput(1, 11);
+    switch(selection){
+      case 1:
+      {
+        orc temp = orc();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 2:
+      {
+        elf temp = elf();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 3:
+      {
+        dwarf temp = dwarf();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 4:
+      {
+        human temp = human();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 5:
+      {
+        goblin temp = goblin();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 6:
+      {
+        cat temp = cat();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 7:
+      {
+        dog temp = dog();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 8:
+      {
+        lizard temp = lizard();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 9:
+      {
+        vulture temp = vulture();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 10:
+      {
+        cephalopod temp = cephalopod();
+        temp.personDetail();
+        pressKey();
+        break;
+      }
+      case 11:
+        breakFree = true;
+        break;
+    }
+  }
+}
+
+void about(){
+    bool breakFree = false;
+    while (breakFree != true){
+      system("CLS");
+      longBox menu = longBox(2, 32);
+      menu.title("About Section");
+      menu.content("");
+      menu.content("(1) Race Info");
+      menu.content("(2) How to Play");
+      menu.content("(3) Main Menu");
+      menu.content("");
+      menu.bottom();
+      int eventLoopInput;
+      eventLoopInput = numInput(1, 3);
+      switch (eventLoopInput){
+      case 1:
+        raceInfo();
+        break;
+      case 2:
+      {
+        system("CLS");
+        textBox(2, "Inheritance Quest");
+        textFunc("Inheritance quest is a rogue-like text based RPG. In it, you play as a member of your family blood line. The objective is simple, stay alive and earn as much gold as you can for your family.");
+        gap();
+
+        textBox(2, "Map");
+        textFunc("When playing, you will navigate a map of events. A choice will be given to you each time you move forwards, 'Do you wish to move left or right?'. Whichever option you choose will take you to the next event.");
+        gap();
+
+        textBox(2, "Events");
+        textFunc("Events are generated randomly, and it is your choice as the player on how you will deal with each one. When starting an event, you will be shown 5 options:");
+        longBox box = longBox (2, 60);
+        box.title("Actions");
+        box.content("(1) Attack");
+        box.content("(2) Persuasion");
+        box.content("(3) Dread");
+        box.content("(4) Intelligence");
+        box.content("(5) Play Guitar");
+        box.bottom();
+        textFunc("These options, whichever you select, will lead to different outcomes. The result of your success is calculated using a dice roll and your player stats as a modifier.");
+        textFunc("Once you have chosen an option, the event will continue, and you will be rewarded or punished accordingly.");
+        gap();
+
+        textBox(2, "Weapons");
+        textFunc("Weapons are used during the attack sequence of an event. Each new player will start with 2 random weapons. There is a chance that when you complete an event, you will find another weapon.");
+        textFunc("Each weapon varies in rarity. The rarer the weapon, the more damage it will do, so be sure to look out for those.");
+        gap();
+
+        textBox(2, "Items");
+        textFunc("Items can come in 3 varities: Healing items, rich items, and relics.");
+        textFunc("Healing items are used to heal the player for any lost health. Each healing item can vary in the amount it will heal you. These can either be found during an event, or bought from the store.");
+        textFunc("Rich items can be sold at the store in exchange for gold. These items can only be found during events.");
+        textFunc("Relics increase the players base stats, making modifiers on dice rolls higher. These can only be bought from the store.");
+        gap();
+
+        textBox(2, "Store");
+        textFunc("The store can be accessed from the main menu. Here you can spend the gold that your family has earnt on items and upgrades. Each store you visit will have 3 healing items and a relic to choose from.");
+        textFunc("If you aren't in the market for any of these items however, you can sell any rich items that you have found on your travels.");
+        textFunc("If your merchant reputation is high enough, you may even qualify for a discount on purchasable items.");
+        gap();
+
+        textBox(2, "Reputation");
+        textFunc("If you upset an NPC of a certain faction, you will lose reputation within that faction. However, if you leave them with a favourable opinion of you, then your faction reputation will increase.");
+        textFunc("If your faction repuation is too low, then your dice rolls during an event with that faction will be decreased. The worse your reputation is, the lower your roll scores will be. The opposite applies for a high reputation.");
+        gap();
+
+        textBox(2, "Death and Retirement");
+        textFunc("Each time your player dies or retires, you will start again with a new player within the same family. You will inherit the family gold, however, all items, weapons, and upgrades will be lost with the last player.");
+        textFunc("You will find that if you reach the end of the map, your player will automatically retire, and you will begin again.");
+        pressKey();
+        break;
+      }
+
+      case 3:
+        breakFree = true;
+        break;
+      }
+    }
+}
+
+
+
 int main(){
-  cout<<"Please Enter your family's name"<<endl;
-  cout<<"Family Name: ";
+  textBox(1, "Please ensure the console window is fullscreen");
+  textBox(1, "Be sure to visit the 'About' section in the main menu if you are unsure on how to play");
+  pressKey();
+  system("CLS");
+  intro();
+  system("CLS");
+  textBox(2, "Please enter your family name");
   string familyNameInput;
-  cin >> familyNameInput;
-  system("CLS");
+  familyNameInput = lenCheck();
+  gap();
 
-  cout<<"Please Enter your family's motto"<<endl;
-  cout<<"Family Motto: ";
+  textBox(2, "Please enter your family's motto");
   string familyMottoInput;
-  cin >> familyMottoInput;
-  system("CLS");
+  familyMottoInput = lenCheck();
+  gap();
 
-  cout<<"Please Enter your family's race"<<endl;
-  cout<<"Family Race: ";
+  textBox(2, "Please select a race");
+  textBox(1, "(1)  Orc", 20);
+  textBox(1, "(2)  Elf", 20);
+  textBox(1, "(3)  Dwarf", 20);
+  textBox(1, "(4)  Human", 20);
+  textBox(1, "(5)  Goblin", 20);
+  textBox(1, "(6)  Cat", 20);
+  textBox(1, "(7)  Dog", 20);
+  textBox(1, "(8)  Lizard", 20);
+  textBox(1, "(9)  Vulture", 20);
+  textBox(1, "(10) Cephalopoid", 20);
+  int selection;
   string familyRaceInput;
-  cin >> familyRaceInput;
-  system("CLS");
+  selection = numInput(1, 10);
+  switch(selection){
+    case 1:
+      familyRaceInput = "Orc";
+      break;
+    case 2:
+      familyRaceInput = "Elf";
+      break;
+    case 3:
+      familyRaceInput = "Dwarf";
+      break;
+    case 4:
+      familyRaceInput = "Human";
+      break;
+    case 5:
+      familyRaceInput = "Goblin";
+      break;
+    case 6:
+      familyRaceInput = "Cat";
+      break;
+    case 7:
+      familyRaceInput = "Dog";
+      break;
+    case 8:
+      familyRaceInput = "Lizard";
+      break;
+    case 9:
+      familyRaceInput = "Vulture";
+      break;
+    case 10:
+      familyRaceInput = "Cephalopoid";
+      break;
+  }
+  gap();
 
   family playerFamily = family(familyNameInput, familyMottoInput, familyRaceInput);
-  playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace());
-  playerFamily.getCurrentPlayer().getInventory().generateNewWeapon();
-  playerFamily.getCurrentPlayer().getInventory().generateNewWeapon();
+  playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace(), playerFamily.getGold());
+  
+  playerFamily.getCurrentPlayer().getInventory().rndQuantityGroupItem(1);
   bool pressedExit = false;
 
   do{  
@@ -1775,71 +2693,92 @@ int main(){
     while (isEmpty != true){
       bool breakFree = false;
       while (breakFree != true){
-        system("CLS");      
-        cout<< "Please Select an action" <<endl;
-        cout<< "(1) Continue to next event" << endl;
-        cout<< "(2) Visit shop" << endl;
-        cout<< "(3) Retire" << endl;
-        cout<< "(4) View inventory" << endl;
-        cout<< "(5) Select Weapon" << endl;
-        cout<< "(6) Heal Player" << endl;
-        cout<< "(10) EXIT" << endl;
+        system("CLS");
+        playerFamily.getCurrentPlayer().header();
+        longBox menu = longBox(2, 32);
+        menu.title("Main Menu");
+        menu.content("");
+        menu.content("(1) Continue to Next Event");
+        menu.content("(2) Visit Shop");
+        menu.content("(3) Inventory");
+        menu.content("(4) Select Weapon");
+        menu.content("(5) Heal Player");
+        menu.content("(6) Retire");
+        menu.content("(7) Exit Game");
+        menu.content("(8) About");
+        menu.content("");
+        menu.bottom();
         int eventLoopInput;
-        cin >> eventLoopInput;
+        eventLoopInput = numInput(1, 8);
         switch (eventLoopInput){
         case 1:
           breakFree = true;
           break;
         case 2:
-          // Shop code
+          store(playerFamily.getCurrentPlayer());
           break;
-        case 3: 
-          cout<< "You feel like the road ahead is too far.."<< endl;
-          cout<< "It's consquences too great.."<< endl;
-          cout<< "Throwing your weapon down, you give in, and go home." << endl;
+        case 3:
+          playerFamily.getCurrentPlayer().displayPlayerInfo();
+          pressKey();
+          break;
+        case 4:
+          system("CLS");
+          playerFamily.getCurrentPlayer().header();
+          playerFamily.getCurrentPlayer().getInventory().changeCurrentWeapon();
+          break;
+        case 5:
+          system("CLS");
+          playerFamily.getCurrentPlayer().header();
+          playerFamily.getCurrentPlayer().consumeHealItem();
+          break;
+        case 6: 
+          system("CLS");
+          textFunc("You feel like the road ahead is too far..");
+          textFunc("It's consquences too great..");
+          textFunc("Throwing your weapon down, you give in, and go home.");
           pressKey();
           system("CLS");
+          playerFamily.increaseFamilyGold(playerFamily.getCurrentPlayer().getGold());
           playerFamily.getCurrentPlayer().setRetired(true);
           breakFree = true;
           break;
-        case 4:
-          playerFamily.getCurrentPlayer().getInventory().displayQuantityItems();
-          playerFamily.getCurrentPlayer().getInventory().displayAllWeapons();
-          pressKey();
-          break;
-        case 5:
-          playerFamily.getCurrentPlayer().getInventory().changeCurrentWeapon();
-          pressKey();
-          break;
-        case 6:
-          playerFamily.getCurrentPlayer().consumeHealItem();
-          break;
-        case 10:
+        case 7:
           playerFamily.familyStories();
           pressKey();
           return 1;
           break;
-        }       
+        case 8:
+          about();
+          break;  
+        }    
+         
       }
       
       if (playerFamily.getCurrentPlayer().getRetired() == true){
-        cout<< "The family grows and a new adventruer take up the helm" << endl;
-        playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace());
+        textFunc("The family grows and a new adventruer take up the helm");
+        pressKey();
+        system("CLS");
+        playerFamily.increaseFamilyGold(playerFamily.getCurrentPlayer().getGold());
+        playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace(), playerFamily.getGold());
         map gameMap = map(allEvents.size());   
       }  
   
       if(gameMap.checkIfEndLevel()){
-        cout<<"You have reached the end of your path" << endl;
+        textFunc("You have reached the end of your path");
         break;
       }
 
       system("CLS"); 
       gameMap.getBinTree().printBT();
-      cout << "Do you wish to move left or right? " << endl;
-      string playerChoiceLeftOrRight;
-      cin >> playerChoiceLeftOrRight;
+      longBox box = longBox(1, 40);
+      box.title("Do you wish to move left or right?");
+      box.content("(1) Left");
+      box.content("(2) Right");
+      box.bottom();
+      int playerChoiceLeftOrRight;
+      playerChoiceLeftOrRight = numInput(1,2);
 
-      if (playerChoiceLeftOrRight == "left" ||	playerChoiceLeftOrRight == "Left"){
+      if (playerChoiceLeftOrRight == 1){
         if(gameMap.changeLocation(true)){ // if you want to go left put true
           gameMap.getCurrentLocation()->getNodeEvent()->startEvent(playerFamily.getCurrentPlayer(), gameMap.getCurrentLocation()->getNodeEvent()->eventNpc );
           pressKey();
@@ -1855,21 +2794,25 @@ int main(){
 
       if (isEmpty == true){
         system("CLS");
-        cout << "You reach the end of known world" << endl;
-        cout << "Turning back you face the path of your travels" << endl; 
-        cout << "It is time to go home."<< endl;
+        textFunc("You reach the end of known world");
+        textFunc("Turning back you face the path of your travels");
+        textFunc("It is time to go home.");
         pressKey();
         system("CLS");
-        playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace());
+        playerFamily.increaseFamilyGold(playerFamily.getCurrentPlayer().getGold());
+        playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace(), playerFamily.getGold());
       }
 
       if (playerFamily.getCurrentPlayer().getPlayerStatus()){
-        cout<< "The world fade around you..."<< endl;
-        cout<< "...You feel your last breath"<< endl;
-        cout<< "But new life begins to stir..." <<endl;
-        cout<< "your child starts anew"<<endl;
+        system("CLS");
+        textFunc("The world fade around you...");
+        textFunc("...You feel your last breath");
+        textFunc("But new life begins to stir...");
+        textFunc("your child starts anew");
         pressKey();
-        playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace());
+        system("CLS");
+        playerFamily.increaseFamilyGold(playerFamily.getCurrentPlayer().getGold());
+        playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace(), playerFamily.getGold());
       }
     }
   } while (pressedExit != true);

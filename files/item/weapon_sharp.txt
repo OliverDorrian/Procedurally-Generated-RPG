@@ -1,13 +1,14 @@
 sword
 dagger
+daggers
+longsword
 spear
 spike
 shiv
 rapier
-schweizersäbel
 scimitar
 katana
-zweihänder
 kopis
-danish_axe
-war_scythe
+danish axe
+war scythe
+machete
