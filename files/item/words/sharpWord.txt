@@ -3,4 +3,10 @@ diced
 quartered
 split
 impaled
-cut asunder
+chopped
+slashed
+stabbed
+pierced
+sliced
+shanked
+skewered
