@@ -201,13 +201,23 @@ int numInput(int low, int high){
   return 0;
 }
 
+bool spaceCheck(string input){
+  for(int i=0; i<input.length(); i++){
+    if(isspace(input[i])){
+      return true;
+    }
+  }
+  return false;
+}
+
 string lenCheck(){
   string input = "";
   bool passed = false;
   while(!passed){
     inputBox();
-    //getline(cin, input, '\n');
-    cin >> input;
+    cin.clear();
+    getline(cin >> ws, input);
+    //cin >> input;
     if(input.length() > 15){
       textBox(4,1,"Input must be 15 characters or less");
       cin.clear();
