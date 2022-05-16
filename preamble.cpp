@@ -25,3 +25,21 @@ vector<string> getAllStreetPreamble(){
     streetPreamble.push_back("You wander through the streets aimlessly.");
     return streetPreamble;
 }
+
+vector<string> getAllVillagePreamble(){
+    vector<string> villagePreamble;
+    villagePreamble.push_back("You wander through a village aimlessly.");
+    return villagePreamble;
+}
+
+vector<string> getAllCryptPreamble(){
+    vector<string> cryptPreamble;
+    cryptPreamble.push_back("You wander through some crypts aimlessly.");
+    return cryptPreamble;
+}
+
+vector<string> getAllRoadPreamble(){
+    vector<string> roadPreamble;
+    roadPreamble.push_back("You wander along a road aimlessly.");
+    return roadPreamble;
+}
