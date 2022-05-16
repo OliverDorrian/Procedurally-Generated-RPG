@@ -16,52 +16,58 @@
 #include "intro.cpp"
 #include "preamble.cpp"
 #include "items.cpp"
-#include "title.cpp"
 #include "headers/utility.h"
+#include "title.cpp"
 using namespace std;
 
-// sets file constants
-file orcFileWord = file("files/Orc/word.txt");
-file orcFileAdjective = file("files/Orc/adjective.txt");
-file dwarfFileWord = file("files/Dwarf/word.txt");
-file dwarfFileSuffix = file("files/Dwarf/suffix.txt");
-file elfFileWord = file("files/Elf/words.txt");
-file humanMaleForeName = file("files/Human/male.txt");
-file humanFemaleForeName = file("files/Human/female.txt");
-file humanSurname = file("files/Human/surname.txt");
-file lizardWord = file("files/Lizard/word.txt");
-file lizardSuffix = file("files/Lizard/suffix.txt");
-file cephWord = file("files/Cephalopoid/word.txt");
-file cephSuffix = file("files/Cephalopoid/suffix.txt");
-file catWord = file("files/Cat/word.txt");
-file catPrefix = file("files/Cat/prefix.txt");
-file dogWord = file("files/Dog/word.txt");
-file dogSuffix = file("files/Dog/suffix.txt");
-file vulWord = file("files/Vulture/word.txt");
-file vulForeSuffix = file("files/Vulture/foresuffix.txt");
-file vulSuffix = file("files/Vulture/suffix.txt");
-file goblinWord = file("files/Goblin/prefix.txt");
-file goblinSuffix = file("files/Goblin/suffix.txt");
-file sharpFile = file("files/item/weapon_sharp.txt"); // gets file object of names of weapons
-file sharpWords = file("files/item/words/sharpWord.txt"); // gets file object with the words associated with weapon type
-file genFile = file("files/item/random.txt");
-file randomWords = file("files/item/words/randomWord.txt");
-file bluntFile = file("files/item/blunt.txt");
-file bluntWords = file("files/item/words/bluntWords.txt");
-file healingWords = file("files/items/healing.txt");
-file richWords = file("files/items/rich.txt");
-file attackWin = file("files/attackSuccess.txt");
+// FILE CONSTANTS
+
+// Race files
+file orcFileWord = file("files/Races/Names/Orc/word.txt");
+file orcFileAdjective = file("files/Races/Names/Orc/adjective.txt");
+file dwarfFileWord = file("files/Races/Names/Dwarf/word.txt");
+file dwarfFileSuffix = file("files/Races/Names/Dwarf/suffix.txt");
+file elfFileWord = file("files/Races/Names/Elf/words.txt");
+file humanMaleForeName = file("files/Races/Names/Human/male.txt");
+file humanFemaleForeName = file("files/Races/Names/Human/female.txt");
+file humanSurname = file("files/Races/Names/Human/surname.txt");
+file lizardWord = file("files/Races/Names/Lizard/word.txt");
+file lizardSuffix = file("files/Races/Names/Lizard/suffix.txt");
+file cephWord = file("files/Races/Names/Cephalopoid/word.txt");
+file cephSuffix = file("files/Races/Names/Cephalopoid/suffix.txt");
+file catWord = file("files/Races/Names/Cat/word.txt");
+file catPrefix = file("files/Races/Names/Cat/prefix.txt");
+file dogWord = file("files/Races/Names/Dog/word.txt");
+file dogSuffix = file("files/Races/Names/Dog/suffix.txt");
+file vulWord = file("files/Races/Names/Vulture/word.txt");
+file vulForeSuffix = file("files/Races/Names/Vulture/foresuffix.txt");
+file vulSuffix = file("files/Races/Names/Vulture/suffix.txt");
+file goblinWord = file("files/Races/Names/Goblin/prefix.txt");
+file goblinSuffix = file("files/Races/Names/Goblin/suffix.txt");
+
+// Weapon Files
+file sharpFile = file("files/Weapons/Names/sharp.txt"); // gets file object of names of weapons
+file sharpWords = file("files/Weapons/Actions/sharpWord.txt"); // gets file object with the words associated with weapon type
+file genFile = file("files/Weapons/Names/random.txt");
+file randomWords = file("files/Weapons/Actions/randomWord.txt");
+file bluntFile = file("files/Weapons/Names/blunt.txt");
+file bluntWords = file("files/Weapons/Actions/bluntWord.txt");
+
 // Motto Files
-file orcMotto = file("files/mottos/orc.txt");
-file dogMotto = file("files/mottos/dog.txt");
-file genericMotto = file("files/mottos/generic.txt");
+file orcMotto = file("files/Races/Mottos/orc.txt");
+file dogMotto = file("files/Races/Mottos/dog.txt");
+file genericMotto = file("files/Races/Mottos/generic.txt");
 
 vector<events> allEvents = getAllEvents();
 vector<string> allMeadowsIntro = getAllMeadowsIntro();
 vector<string> allUnderIntro = getAllUnderWorldIntro();
+
 vector<string> allBarPreamble = getAllBarPreamble();
 vector<string> allHousePreamble = getAllHousePreamble();
 vector<string> allStreetPreamble = getAllStreetPreamble();
+vector<string> allVillagePreamble = getAllVillagePreamble();
+vector<string> allRoadPreamble = getAllRoadPreamble();
+vector<string> allCryptPreamble = getAllCryptPreamble();
 
 vector<healItems> allHealItems = getAllHealItems();
 vector<richItems> allRichItems = getAllRichItems();
@@ -69,10 +75,6 @@ vector<relics> allRelics = getAllRelics();
 
 
 
-void intro(){
-  all();
-  _getwch();
-}
 
 
 // Weapon is given to each person within a One to One relationship
@@ -2403,10 +2405,7 @@ void about(){
 
 
 int main(){
-  textBox(1, "Please ensure the console window is fullscreen");
-  textBox(1, "Be sure to visit the 'About' section in the main menu if you are unsure on how to play");
-  pressKey();
-  system("CLS");
+
   intro();
   system("CLS");
   textBox(2, "Please enter your family name");
