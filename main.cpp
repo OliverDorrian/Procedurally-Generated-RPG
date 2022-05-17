@@ -58,10 +58,16 @@ file orcMotto = file("files/Races/Mottos/orc.txt");
 file dogMotto = file("files/Races/Mottos/dog.txt");
 file genericMotto = file("files/Races/Mottos/generic.txt");
 
+// VECTORS
+
+// Loads all events
 vector<events> allEvents = getAllEvents();
+
+// Loads all intros
 vector<string> allMeadowsIntro = getAllMeadowsIntro();
 vector<string> allUnderIntro = getAllUnderWorldIntro();
 
+// Loads all preambles
 vector<string> allBarPreamble = getAllBarPreamble();
 vector<string> allHousePreamble = getAllHousePreamble();
 vector<string> allStreetPreamble = getAllStreetPreamble();
@@ -69,6 +75,7 @@ vector<string> allVillagePreamble = getAllVillagePreamble();
 vector<string> allRoadPreamble = getAllRoadPreamble();
 vector<string> allCryptPreamble = getAllCryptPreamble();
 
+// Loads all items
 vector<healItems> allHealItems = getAllHealItems();
 vector<richItems> allRichItems = getAllRichItems();
 vector<relics> allRelics = getAllRelics();
@@ -207,9 +214,9 @@ protected:
   string faction; // which faction the person belongs to
   string name; // name of the person
   string race; // which race they belong to
-  string desc;
-  string desc2;
-  string motto;
+  string desc; // race description line 1
+  string desc2; // race description line 2
+  string motto; // the persons motto
   int height; // how tall they are
   int age; // age of the person
   int health = 15; // health stat
@@ -1848,7 +1855,7 @@ class store{ // Event that lets player buy items
     int gold;
     int selection;
 
-    // instantiation of placeholder items, these will eventually be randomly generated
+    // instantiation of randomly generated items
 
     healItem item1 = healItem();
     healItem item2 = healItem();
@@ -2401,7 +2408,6 @@ void about(){
       }
     }
 }
-
 
 
 int main(){
