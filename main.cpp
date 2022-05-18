@@ -66,14 +66,16 @@ vector<events> allEvents = getAllEvents();
 // Loads all intros
 vector<string> allMeadowsIntro = getAllMeadowsIntro();
 vector<string> allUnderIntro = getAllUnderWorldIntro();
+vector<string> allDesertIntro = getAllDesertIntro();
 
 // Loads all preambles
 vector<string> allBarPreamble = getAllBarPreamble();
 vector<string> allHousePreamble = getAllHousePreamble();
 vector<string> allStreetPreamble = getAllStreetPreamble();
 vector<string> allVillagePreamble = getAllVillagePreamble();
-vector<string> allRoadPreamble = getAllRoadPreamble();
+vector<string> allRoadsPreamble = getAllRoadsPreamble();
 vector<string> allCryptPreamble = getAllCryptPreamble();
+vector<string> allCampPreamble = getAllCampPreamble();
 
 // Loads all items
 vector<healItems> allHealItems = getAllHealItems();
@@ -1506,6 +1508,8 @@ public:
       introText = processText(allUnderIntro[randNumber(0, allUnderIntro.size())]);
     } else if(this->biome == "Meadows"){
       introText = processText(allMeadowsIntro[randNumber(0, allMeadowsIntro.size())]);
+    } else if(this->biome == "Desert"){
+      introText = processText(allDesertIntro[randNumber(0, allDesertIntro.size())]);
     }
 
     // sets the strings for event 
@@ -1518,6 +1522,18 @@ public:
     }
     if (this->location == "street"){
       preAmbleText = processText(allStreetPreamble[randNumber(0, allStreetPreamble.size())]);
+    }
+    if (this->location == "Roads"){
+      preAmbleText = processText(allRoadsPreamble[randNumber(0, allRoadsPreamble.size())]);
+    }
+    if (this->location == "Village"){
+      preAmbleText = processText(allVillagePreamble[randNumber(0, allVillagePreamble.size())]);
+    }
+    if (this->location == "Crypt"){
+      preAmbleText = processText(allCryptPreamble[randNumber(0, allCryptPreamble.size())]);
+    }
+    if (this->location == "Camp"){
+      preAmbleText = processText(allCampPreamble[randNumber(0, allCampPreamble.size())]);
     }
     //preAmbleText = processText(currentEvent.preAmble[randNumber(0, 2)]);
     problemText = processText(currentEvent.problem[randNumber(0, 3)]);
@@ -1652,6 +1668,7 @@ public:
   }
 
 
+  //Function to alter player reputation
   void changeRep(player& passedPlayer, string repPassed){
     if(eventFaction == "Commoner"){
       passedPlayer.removeRep(eventFaction);
@@ -1671,6 +1688,7 @@ public:
     }    
   }
 
+  //Function to begin event
   void startEvent(player& passedPlayer, person& eventNpc){
     system("CLS");
     longBox box = longBox (2, 60);
@@ -1680,9 +1698,6 @@ public:
     textFunc(preAmbleText);
     gap();
     textFunc(problemText);
-    //cout << introText << endl; 
-    //cout << preAmbleText << endl;
-    //cout << problemText << endl;
     box.title("Actions");
     box.content("(1) Attack");
     box.content("(2) Persuasion");
@@ -1803,6 +1818,7 @@ public:
     }
   }
 
+  //Function for event success
   void eventSuccess(player& passedPlayer){
     int randNum = randNumber(0, 4);
     switch (randNum){
@@ -1829,6 +1845,7 @@ public:
     }
   }
 
+  //Function for event failure
   void eventFail(player& passedPlayer){
     int randNum = randNumber(0, 2);
 
@@ -2233,6 +2250,7 @@ public:
   }
 };
 
+//Function for displaying race details in the menu
 void raceInfo(){
   bool breakFree = false;
   while(!breakFree){
@@ -2329,6 +2347,7 @@ void raceInfo(){
   }
 }
 
+//About section thats explains how to play the game
 void about(){
     bool breakFree = false;
     while (breakFree != true){

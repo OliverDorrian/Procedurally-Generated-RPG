@@ -27,19 +27,28 @@ vector<string> getAllStreetPreamble(){
 }
 
 vector<string> getAllVillagePreamble(){
-    vector<string> villagePreamble;
-    villagePreamble.push_back("You wander through a village aimlessly.");
-    return villagePreamble;
-}
+        vector<string> villagePreamble;
+        villagePreamble.push_back("An offensive smell pierces your nostril, you follow the source of the smell and come across a village.");
+        villagePreamble.push_back("As you continue on your path, the road leads to a nice looking, but foul smelling, village.");
+        return villagePreamble;
+    }
 
 vector<string> getAllCryptPreamble(){
-    vector<string> cryptPreamble;
-    cryptPreamble.push_back("You wander through some crypts aimlessly.");
-    return cryptPreamble;
-}
+        vector<string>cryptPreamble;
+        cryptPreamble.push_back("Headed on your way you see the entrance to what appears to be an old crypt, thinking you may be able to pinch a penny or two, you head inside.");
+        return cryptPreamble;
+    }
 
-vector<string> getAllRoadPreamble(){
-    vector<string> roadPreamble;
-    roadPreamble.push_back("You wander along a road aimlessly.");
-    return roadPreamble;
-}
+
+vector<string> getAllRoadsPreamble(){
+        vector<string> roadsPreamble;
+        roadsPreamble.push_back("You head on your way and follow a road.");
+        roadsPreamble.push_back("You decide to travel alongside a road you came across.");
+        return roadsPreamble;
+    }
+
+vector<string> getAllCampPreamble(){
+        vector<string> campPreamble;
+        campPreamble.push_back("In the distance you spot a circle of structures, isolated from civilization. Huts, small and large, seemingly constructed from any materials that could be plundered. 'This must be a bandit encampment' you think to yourself. You approach with apprehension.");
+        return campPreamble;
+    }

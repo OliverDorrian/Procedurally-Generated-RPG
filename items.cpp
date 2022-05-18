@@ -4,24 +4,24 @@
 using namespace std;
 
 struct healItems{
-  string name;
-  string desc;
-  int healAmount;
-  int value;
+  string name; //Name
+  string desc; //Description
+  int healAmount; //Amount the item heals for
+  int value; //The cost of the item
 };
 
 struct richItems{
-    string name;
-    string desc;
-    int value;
+    string name; //Name
+    string desc; //Description
+    int value; //The cost of the item
 };
 
 struct relics{
-    string name;
-    string desc;
-    string att;
-    int mod;
-    int value;
+    string name; //Name
+    string desc; //Description
+    string att; //The attribute it affects
+    int mod; //The value it affects the attribute by
+    int value; //The cost of the item
 };
 
 vector<healItems> getAllHealItems(){
