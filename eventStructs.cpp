@@ -197,21 +197,21 @@ vector<events> getAllEvents(){
   event6.attackFailure = "Deservedly, the injured man bests you. Karma.";
 
   event6.speech = 6;
-  event6.persuasionSuccess = "You convince <npcname> to get up and leave his destroyed belongings, he thanks you for talking sense into him.";
-  event6.persuasionFail ="You try to make <npcname> leave his belongings behind and get somewhere safe, but your words seem to have no effect, he really seems a nervous wreck after the ambush you heard.";
+  event6.persuasionSuccess = "You convince <npcName> to get up and leave his destroyed belongings, he thanks you for talking sense into him.";
+  event6.persuasionFail ="You try to make <npcName> leave his belongings behind and get somewhere safe, but your words seem to have no effect, he really seems a nervous wreck after the ambush you heard.";
 
   event6.dread = 6;
-  event6.dreadSuccess = "You head over to the side of the road where the ambush occurred, Poising your weapon ready to strike at the attacker you see a woman with blonde hair fleeing the scene. You tell <npcname> he is safe now.";
-  event6.dreadFail = "As you head towards the ambush site, something rustles in the bushes and you lose your nerve. You head back to <npcname> unsuccessful ";
+  event6.dreadSuccess = "You head over to the side of the road where the ambush occurred, Poising your weapon ready to strike at the attacker you see a woman with blonde hair fleeing the scene. You tell <npcName> he is safe now.";
+  event6.dreadFail = "As you head towards the ambush site, something rustles in the bushes and you lose your nerve. You head back to <npcName> unsuccessful ";
 
 
   event6.intelligence = 6;
-  event6.intelligenceSuccess = "You tell <npcname> that if he gets out of this alive he could face his attacker in court. This knowledge seems to bring him some comfort. He thanks you";
-  event6.intelligenceFail = " You tell <npcname> that if he gets out of this alive he could face his attacker in court. But he replies 'there's no use, it'll never go my way' You leave the man with a defeated look on his face.";
+  event6.intelligenceSuccess = "You tell <npcName> that if he gets out of this alive he could face his attacker in court. This knowledge seems to bring him some comfort. He thanks you";
+  event6.intelligenceFail = " You tell <npcName> that if he gets out of this alive he could face his attacker in court. But he replies 'there's no use, it'll never go my way' You leave the man with a defeated look on his face.";
 
 
-  event6.guitarSuccess ="Your melody seems to settle the nerves of <npcname> he thanks you for not leaving him during this trying time.";
-  event6.guitarFail ="Unfortunately, your tune does nothing to help <npcname> you decide to leave him.";
+  event6.guitarSuccess ="Your melody seems to settle the nerves of <npcName> he thanks you for not leaving him during this trying time.";
+  event6.guitarFail ="Unfortunately, your tune does nothing to help <npcName> you decide to leave him.";
   allEvents.push_back(event6);
 
   events event7;
@@ -330,7 +330,7 @@ vector<events> getAllEvents(){
 
   event10.problem[0] = "A crowd of Goblins and Orcs surround a crudely designed web of wooden spikes encircling a bloodied and battered pit. <npcName> roars at the crowd. They stand amidst the gore, at the centre of the pit, clutching the head of an Orc they'd just butchered in battle. 'I AM THE UNDEFEATED' they bellow. The spectators become rowdy. This wasn't <npcName>'s first victory. 'WHO'S NEXT' they cry. Hands from everywhere shoot up into the air, each desperate to be selected by the champion. Lost in the elation, you raise your hand as well. What a wonderful display of bravado this all is, you think to yourself. Without hesitation, <npcName> casts their weapon in your direction. 'YOU!' they scream. 'FACE ME!'. Looking nervous, you clamber into the pit. The crowd goes mad with excitement. Perhaps this wasn't the brightest idea, you think to yourself.";
   event10.problem[1] = "You pass through an open area, littered with scraps of parchment containing scribblings of numbers and symbols. The trail leads to an arena, surrounded by an excited mob of Goblins and Orcs. You notice an ocean of mutilated bandit scholars caking the arena floor. '2 PLUS 2 IS 5' <npcName> yells, standing amid the corpses. 'LET ANYONE BRAVE ENOUGH, CHALLENGE THIS NOTION, AND I SHALL PROVE JUST HOW WRONG YOU ARE''. It seems as though these bandits have been trying to understand math. In your haughty hubris, you step forward. 'I shall hear no more of this nonsense.' you cry. '2 plus 2 is 4'. The crowd gasps and turns to face you. <npcName> grins. 'If that is so, little outsider, come down here and convince me'. You realise you are being challenged into combat. This is perhaps one of your more regrettable decisions, you think to yourself.";
-  event10.problem[2] = "Wandering around the camp, you find a crowd of Goblins and Orcs scribbling notes on flat chunks of rocks. They surround a pit adorned with spikes and corpses. You overhear <npcName> in the centre of the pit, addressing the crowd. They're giving a lecture on advanced mutilation and disfigurement of common folk. 'You see, the works of professor Hamgor the Studious seem to imply that brutality should intrinsically come before technique.' they declare. 'It's with this in my mind that I…' <npcName> stops mid sentence upon observing your presence. 'You there!' they cry. 'I don't recognise you. Have you paid the fee to attend this lecture?'. You freeze on the spot. You hadn't paid the fee. 'Uh…' you tremble 'no I didn't'. 'I apologise students for this heinous disruption to your learning' <npcName> says 'May I demonstrate what we've covered with a practical example?'. The crowd drop their notes and clamour with overzealous fervour. You're hurled into the pit. Getting to your feet, you brush yourself off, and find yourself standing face to face with <npcName>.";
+  event10.problem[2] = "Wandering around the camp, you find a crowd of Goblins and Orcs scribbling notes on flat chunks of rocks. They surround a pit adorned with spikes and corpses. You overhear <npcName> in the centre of the pit, addressing the crowd. They're giving a lecture on advanced mutilation and disfigurement of common folk. 'You see, the works of professor Hamgor the Studious seem to imply that brutality should intrinsically come before technique.' they declare. 'It's with this in my mind that I...' <npcName> stops mid sentence upon observing your presence. 'You there!' they cry. 'I don't recognise you. Have you paid the fee to attend this lecture?'. You freeze on the spot. You hadn't paid the fee. 'Uh...' you tremble 'no I didn't'. 'I apologise students for this heinous disruption to your learning' <npcName> says 'May I demonstrate what we've covered with a practical example?'. The crowd drop their notes and clamour with overzealous fervour. You're hurled into the pit. Getting to your feet, you brush yourself off, and find yourself standing face to face with <npcName>.";
 
 
   event10.attackSuccess = "Landing hit after hit, you bring <npcName> to their knees. They gaze up at you in horror. You turn to face their leader, Grogbor the Glorious, sitting on his elevated makeshift throne. He takes some time to ponder the events. <npcName> quivers with fear as the crowd cheers at your performance. After a moment, Grogbor the Glorious sticks out his hand, and gestures a thumbs down. <npcName> howls in terror. You cut their misery short, and in one fell swoop, strike their head from their body. You emerge victorious.";

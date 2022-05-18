@@ -854,6 +854,7 @@ protected:
   int dreadAttribute = 10;
   int health = 15;
   int playerGold;
+  int contribution = 0;
   //Reputation counters
   int comRep = 5; //Commoner reputation
   int impRep = 5; //Imperial reputation
@@ -1120,6 +1121,10 @@ public:
     playerGold += passedInt;
   }
 
+  void setContribution(int passedGold){
+    contribution = playerGold - passedGold;
+  }
+
   void decreaseHealth(int passedInt, string passedNPC){
     //cout << "Your Health: " << this->getHealth() << " has been decreased by: " << passedInt << "!"  <<  endl;
     health -= passedInt;
@@ -1175,6 +1180,10 @@ public:
 
   int getGold(){
     return playerGold;
+  }
+
+  int getContribution(){
+    return contribution;
   }
 
   int getStrength(){
@@ -1260,7 +1269,7 @@ public:
      } else{
        box.content("You lived till old age!");
      }
-     box.content("You contributed " +  to_string(allDecedents[i].getGold()) + " gold to the family cause!");
+     box.content("You contributed " +  to_string(allDecedents[i].getContribution()) + " gold to the family cause!");
      box.bottom();
      gap();
    }
@@ -1268,7 +1277,7 @@ public:
 
   // SETTERS
   void increaseFamilyGold(int passedGold){
-    familyGold += passedGold;
+    familyGold = passedGold;
   }
 
   void setFamilyPrestige(int passedPrestige){
@@ -2548,7 +2557,6 @@ int main(){
           textFunc("Throwing your weapon down, you give in, and go home.");
           pressKey();
           system("CLS");
-          playerFamily.increaseFamilyGold(playerFamily.getCurrentPlayer().getGold());
           playerFamily.getCurrentPlayer().setRetired(true);
           breakFree = true;
           break;
@@ -2568,6 +2576,7 @@ int main(){
         textFunc("The family grows and a new adventruer take up the helm");
         pressKey();
         system("CLS");
+        playerFamily.getCurrentPlayer().setContribution(playerFamily.getGold());
         playerFamily.increaseFamilyGold(playerFamily.getCurrentPlayer().getGold());
         playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace(), playerFamily.getGold());
         map gameMap = map(allEvents.size());   
@@ -2609,6 +2618,7 @@ int main(){
         textFunc("It is time to go home.");
         pressKey();
         system("CLS");
+        playerFamily.getCurrentPlayer().setContribution(playerFamily.getGold());
         playerFamily.increaseFamilyGold(playerFamily.getCurrentPlayer().getGold());
         playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace(), playerFamily.getGold());
       }
@@ -2621,6 +2631,7 @@ int main(){
         textFunc("your child starts anew");
         pressKey();
         system("CLS");
+        playerFamily.getCurrentPlayer().setContribution(playerFamily.getGold());
         playerFamily.increaseFamilyGold(playerFamily.getCurrentPlayer().getGold());
         playerFamily.generateNewPlayer(playerFamily.getFamilyName(), playerFamily.getFamilyMotto(), playerFamily.getFamilyRace(), playerFamily.getGold());
       }
