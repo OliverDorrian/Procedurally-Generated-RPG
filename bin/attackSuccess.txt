@@ -1,5 +1,0 @@
-You rip out <npcName>'s heart, throw it in the air and smack it with your <playWeaponName>. Home run!
-You tear off <npcName>'s arms and play their head like a drum.
-You kick <npcName> with such force that your leg bursts through their chest and pops out of the other side.
-You squeeze either side of <npcName>'s head until their eyes burst out of their sockets. They splat on the floor, leaving a mark reminiscent of a butterfly.
-You grab <npcName> by their legs and spin them around in a circle creating your own human scale centrifuge. The various components that make up <npcName>'s blood begin to separate. Their soul slowly and painfully departs from this world.
