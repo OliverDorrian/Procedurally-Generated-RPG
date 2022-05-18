@@ -1,3 +1,8 @@
+//Inheritance Quest RPG game by Oliver Dorrian (20202612), Xander Baker (20209021), and Isaac Morton (20210797)
+//The development contribution trail can be found on the following GitHub pages:
+//Earlier version: https://github.com/OliverDorrian/Procedural-RPG
+//Latest version: https://github.com/OliverDorrian/Procedurally-Generated-RPG
+//(The project page had to be remade due to a GitHub error)
 
 #include <iostream>
 #include <stdlib.h>
